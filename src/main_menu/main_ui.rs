@@ -22,7 +22,7 @@ pub fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Common style for all buttons on the screen
     let button_node = Node {
         width: Val::Px(300.0),
-        height: Val::Px(65.0),
+        height: Val::Px(60.0),
         margin: UiRect::all(Val::Px(20.0)),
         justify_content: JustifyContent::Center,
         align_items: AlignItems::Center,
@@ -51,36 +51,49 @@ pub fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             height: Val::Percent(100.0),
             align_items: AlignItems::Center,
             justify_content: JustifyContent::Center,
+            flex_direction: FlexDirection::Column,
             ..default()
         },
         OnMainMenuScreen,
-        children![(
+        BackgroundColor(BACK_GROUND_COLOR),
+    )).with_children(|parent| {
+        // Display the game name
+        parent.spawn((
             Node {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                // flex_direction: FlexDirection::Column,
-                // align_items: AlignItems::Center,
+                height: Val::Percent(20.0),
+                margin: UiRect {
+                    top: Val::Px(50.0),
+                    ..default()
+                },
                 ..default()
             },
-            BackgroundColor(BACK_GROUND_COLOR),
+            Text::new("Bevy Game Menu UI"),
+            TextFont {
+                font_size: 67.0,
+                ..default()
+            },
+            TextColor(TEXT_COLOR),
+        ));
+
+        // Display three buttons for each action available from the main menu:
+        // - new game
+        // - settings
+        // - quit
+        parent.spawn((
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Percent(70.0),
+                margin: UiRect {
+                    right: Val::Px(50.0),
+                    top: Val::Px(20.0),
+                    ..Default::default()
+                },
+                flex_direction: FlexDirection::Column,
+                justify_content: JustifyContent::FlexStart,
+                align_items: AlignItems::FlexEnd,
+                ..default()
+            },
             children![
-                // Display the game name
-                (
-                    Node {
-                        margin: UiRect::all(Val::Px(50.0)),
-                        ..default()
-                    },
-                    Text::new("Bevy Game Menu UI"),
-                    TextFont {
-                        font_size: 67.0,
-                        ..default()
-                    },
-                    TextColor(TEXT_COLOR),
-                ),
-                // Display three buttons for each action available from the main menu:
-                // - new game
-                // - settings
-                // - quit
                 (
                     Button,
                     button_node.clone(),
@@ -120,6 +133,6 @@ pub fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     ]
                 ),
             ]
-        )],
-    ));
+        ));
+    });
 }
