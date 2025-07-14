@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::main_menu::style::{
+use crate::utils::style::{
     HOVERED_BUTTON, HOVERED_PRESSED_BUTTON, NORMAL_BUTTON, PRESSED_BUTTON,
 };
 

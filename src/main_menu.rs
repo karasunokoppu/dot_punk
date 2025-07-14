@@ -1,16 +1,12 @@
-pub mod button;
 pub mod main_ui;
 pub mod setting_ui;
-pub mod style;
 
 use bevy::prelude::*;
 
 use crate::{
     GameState, despawn_screen,
-    main_menu::{
-        button::button_system,
-        main_ui::{MenuButtonAction, OnMainMenuScreen},
-    },
+    main_menu::main_ui::{MenuButtonAction, OnMainMenuScreen},
+    utils::button::button_system,
 };
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]

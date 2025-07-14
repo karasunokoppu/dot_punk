@@ -3,6 +3,7 @@ mod main_menu;
 mod save_system;
 mod setting;
 mod splash;
+mod utils;
 
 use bevy::prelude::*;
 
@@ -11,7 +12,12 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .init_state::<GameState>()
         .add_systems(Startup, setup_camera)
-        .add_plugins((splash::splash_plugin, main_menu::menu_plugin))
+        .add_plugins((
+            splash::splash_plugin,
+            setting::setting_plugin,
+            main_menu::menu_plugin,
+            in_game::in_game_plugin
+        ))
         .run();
 }
 

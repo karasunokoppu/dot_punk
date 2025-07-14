@@ -1,4 +1,4 @@
-use crate::main_menu::style::{
+use crate::utils::style::{
     NORMAL_BUTTON,
     TEXT_COLOR,
     BACK_GROUND_COLOR,
