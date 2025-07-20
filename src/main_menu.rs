@@ -4,9 +4,7 @@ pub mod setting_ui;
 use bevy::prelude::*;
 
 use crate::{
-    GameState, despawn_screen,
-    main_menu::main_ui::{MenuButtonAction, OnMainMenuScreen},
-    utils::button::button_system,
+    despawn_screen, in_game::world::{ActiveDatas, Position}, main_menu::main_ui::{MenuButtonAction, OnMainMenuScreen}, utils::button::button_system, GameState
 };
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
@@ -40,6 +38,7 @@ pub fn menu_action(
     mut app_exit_events: EventWriter<AppExit>,
     mut menu_state: ResMut<NextState<MenuState>>,
     mut game_state: ResMut<NextState<GameState>>,
+    mut r_active_datas: ResMut<ActiveDatas>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
@@ -47,7 +46,16 @@ pub fn menu_action(
                 MenuButtonAction::Quit => {
                     app_exit_events.write(AppExit::Success);
                 }
-                MenuButtonAction::Play => {
+                MenuButtonAction::NewPlay => {
+                    game_state.set(GameState::InGame);
+                    menu_state.set(MenuState::Disabled);
+                }
+                MenuButtonAction::ContinuePlay => {
+                    //TODO: [実装]
+                    r_active_datas.active_map_id = 1;
+                    r_active_datas.teleport_map = 1;
+                    r_active_datas.teleport_position = Position { x: 0.0, y: 0.0 };
+                    println!("Push ContinuePlay");
                     game_state.set(GameState::InGame);
                     menu_state.set(MenuState::Disabled);
                 }

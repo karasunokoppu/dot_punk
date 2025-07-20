@@ -6,10 +6,26 @@ mod splash;
 mod utils;
 
 use bevy::prelude::*;
+use avian2d::prelude::*;
+
+const WINDOW_WIDTH: f32 = 1200.;
+const WINDOW_HIGHT: f32 = 800.;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins((
+            DefaultPlugins.set(ImagePlugin::default_nearest())
+            .set(WindowPlugin{
+                primary_window: Some(Window {
+                    resolution: (WINDOW_WIDTH, WINDOW_HIGHT).into(),
+                    ..default()
+                }),
+                ..default()
+            }),
+            PhysicsPlugins::default(),
+            PhysicsDebugPlugin::default(),
+        ))
+        .insert_resource(Gravity::ZERO)
         .init_state::<GameState>()
         .add_systems(Startup, setup_camera)
         .add_plugins((

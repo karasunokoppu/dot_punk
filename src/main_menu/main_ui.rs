@@ -12,7 +12,8 @@ pub struct OnMainMenuScreen;
 // Actions that can be triggered from a button click
 #[derive(Component)]
 pub enum MenuButtonAction {
-    Play,
+    NewPlay,
+    ContinuePlay,//TODO [実装]
     Settings,
     BackToMainMenu,
     Quit,
@@ -98,11 +99,25 @@ pub fn main_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     Button,
                     button_node.clone(),
                     BackgroundColor(NORMAL_BUTTON),
-                    MenuButtonAction::Play,
+                    MenuButtonAction::NewPlay,
+                    children![
+                        (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
+                        (
+                            Text::new("New Game"),
+                            button_text_font.clone(),
+                            TextColor(TEXT_COLOR),
+                        ),
+                    ],
+                ),
+                (
+                    Button,
+                    button_node.clone(),
+                    BackgroundColor(NORMAL_BUTTON),
+                    MenuButtonAction::ContinuePlay,
                     children![
                         (ImageNode::new(right_icon), button_icon_node.clone()),
                         (
-                            Text::new("New Game"),
+                            Text::new("Continue"),
                             button_text_font.clone(),
                             TextColor(TEXT_COLOR),
                         ),

@@ -1,10 +1,12 @@
 use bevy::prelude::*;
+use avian2d::prelude::*;
 
-use crate::{despawn_screen, in_game::{world::{map::components::Maps, ActiveDatas}, InGameState}, utils::style::TEXT_COLOR, GameState};
+use crate::{despawn_screen, in_game::{world::{map::{self, components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker}}, ActiveDatas, InGameEntityMarker}, InGameState}, utils::style::TEXT_COLOR, GameState};
 
 pub fn loading_plugin(app: &mut App) {
     app.add_systems(OnEnter(InGameState::Loading), (
         loading_setup,
+        despawn_screen::<InGameEntityMarker>,
         set_game_stage,
     ).chain())
     .add_systems(OnExit(InGameState::Loading), despawn_screen::<OnLoadingScreen>);
@@ -51,14 +53,57 @@ fn set_game_stage(
     mut game_state: ResMut<NextState<InGameState>>,
 ) {
     for map in &maps.map_list {
-        if map.id == r_active_datas.active_map_id {
-            // Spawn the map or any other entities needed for the game
-            let map_image = assets_server.load(&map.sprites.image);
+        //spawn map sprites
+        if map.id == r_active_datas.teleport_map {
+            // Spawn sprites (the map or any other entities needed for the game stage)
+            for sprite in &map.sprites {
+                let map_image = assets_server.load(&sprite.image);
+                commands.spawn((
+                    InGameEntityMarker,
+                    Sprite::from_image(map_image),
+                    Transform::from_xyz(0.0, 0.0, 0.0),
+                    ZIndex(sprite.z_index),
+                ));
+            }
+            for wall_collider in &map.wall_colliders {
+                commands.spawn((
+                    InGameEntityMarker,
+                    RigidBody::Static,
+                    Collider::segment(
+                        Vec2::new(wall_collider.start_node.x, wall_collider.start_node.y),
+                        Vec2::new(wall_collider.end_node.x, wall_collider.end_node.y)
+                    )
+                ));
+            }
+            // Spawn teleport nodes
+            for teleport_node in &map.teleport_nodes {
+                commands.spawn((
+                    InGameEntityMarker,
+                    Transform::from_xyz(teleport_node.node_position.x, teleport_node.node_position.y, 0.0),
+                    Collider::circle(20.0),
+                    RigidBody::Static,
+                    TeleportNodeMarker,
+                    CollidingEntities::default(),
+                    TeleportNode {
+                        id: teleport_node.id,
+                        node_position: teleport_node.node_position,
+                        target_map: teleport_node.target_map,
+                        teleport_position: teleport_node.teleport_position,
+                    }
+                ));
+            }
+        }
+        //spawn player
+        if map.id == r_active_datas.teleport_map {
             commands.spawn((
-                ImageNode::new(map_image),
-                ZIndex(map.sprites.z_index),
+                InGameEntityMarker,
+                PlayerMarker,
+                RigidBody::Dynamic,
+                Collider::circle(20.0),
+                LockedAxes::ROTATION_LOCKED,
+                CollidingEntities::default(),
+                Transform::from_xyz(r_active_datas.teleport_position.x, r_active_datas.teleport_position.y, 0.0),
             ));
-            break;
         }
     }
     // Change the game state to InGame
