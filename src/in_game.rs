@@ -12,7 +12,7 @@ pub struct OnInGameScreen;
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
 pub enum InGameState {
     #[default]
-    disabled,
+    Disabled,
     Loading,
     Playing,
     Paused,
@@ -39,6 +39,7 @@ pub fn in_game_plugin(app: &mut App) {
     .add_plugins(ui::in_game_ui_plugin)
     .add_plugins(player::player_plugin)
     .add_systems(OnEnter(GameState::InGame), start_game)
+    .add_systems(OnExit(GameState::InGame), despawn_screen::<InGameEntityMarker>)
     // for debugging states
     .add_systems(OnEnter(InGameState::Playing), ||{println!(" > InGameState::Playing")})
     .add_systems(OnEnter(InGameState::Paused), ||{println!(" > InGameState::Paused")})
