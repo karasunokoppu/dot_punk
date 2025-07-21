@@ -1,6 +1,11 @@
 use bevy::prelude::*;
 
-use crate::{in_game::{InGameState, PauseState}, setting::key_map, utils::style::{NORMAL_BUTTON, TEXT_COLOR}, GameState};
+use crate::{
+    GameState,
+    in_game::{InGameState, PauseState},
+    setting::key_map,
+    utils::style::{NORMAL_BUTTON, TEXT_COLOR},
+};
 
 #[derive(Component)]
 pub struct OnPauseMenuScreen;
@@ -64,117 +69,123 @@ pub fn toggle_pause_menu(
             // If the game is playing, we can open the pause menu
             (InGameState::Playing, PauseState::Disabled) => {
                 // Otherwise, we can spawn the pause menu UI
-                commands.spawn((
-                    Node {
-                        width: Val::Percent(100.0),
-                        height: Val::Percent(100.0),
-                        ..default()
-                    },
-                    BackgroundColor(Color::srgba(0.1, 0.1, 0.1, 0.5)),
-                    OnPauseMenuScreen,
-                )).with_children(|parent| {
-                    parent.spawn((
+                commands
+                    .spawn((
                         Node {
-                            width: Val::Percent(30.0),
+                            width: Val::Percent(100.0),
                             height: Val::Percent(100.0),
-                            align_items: AlignItems::Center,
-                            justify_content: JustifyContent::Center,
-                            flex_direction: FlexDirection::Column,
                             ..default()
                         },
-                        BackgroundColor(Color::BLACK.with_alpha(0.7))
-                    )).with_children(|parent| {
-                        parent.spawn((
-                        Text("Pause Menu".to_string()),
-                        TextFont {
-                            font_size: 67.0,
-                            ..default()
-                        },
-                        TextColor(TEXT_COLOR),
-                    ));
-                        // Display three buttons for each action available from the main menu:
-                        // - new game
-                        // - settings
-                        // - quit
-                        parent.spawn((
-                            Node {
-                                width: Val::Percent(100.0),
-                                height: Val::Percent(70.0),
-                                margin: UiRect {
-                                    right: Val::Px(50.0),
-                                    top: Val::Px(20.0),
-                                    ..Default::default()
+                        BackgroundColor(Color::srgba(0.1, 0.1, 0.1, 0.5)),
+                        OnPauseMenuScreen,
+                    ))
+                    .with_children(|parent| {
+                        parent
+                            .spawn((
+                                Node {
+                                    width: Val::Percent(30.0),
+                                    height: Val::Percent(100.0),
+                                    align_items: AlignItems::Center,
+                                    justify_content: JustifyContent::Center,
+                                    flex_direction: FlexDirection::Column,
+                                    ..default()
                                 },
-                                flex_direction: FlexDirection::Column,
-                                justify_content: JustifyContent::FlexStart,
-                                align_items: AlignItems::FlexEnd,
-                                ..default()
-                            },
-                            children![
-                                (
-                                    Button,
-                                    button_node.clone(),
-                                    BackgroundColor(NORMAL_BUTTON),
-                                    PauseButtonAction::Save,
+                                BackgroundColor(Color::BLACK.with_alpha(0.7)),
+                            ))
+                            .with_children(|parent| {
+                                parent.spawn((
+                                    Text("Pause Menu".to_string()),
+                                    TextFont {
+                                        font_size: 67.0,
+                                        ..default()
+                                    },
+                                    TextColor(TEXT_COLOR),
+                                ));
+                                // Display three buttons for each action available from the main menu:
+                                // - new game
+                                // - settings
+                                // - quit
+                                parent.spawn((
+                                    Node {
+                                        width: Val::Percent(100.0),
+                                        height: Val::Percent(70.0),
+                                        margin: UiRect {
+                                            right: Val::Px(50.0),
+                                            top: Val::Px(20.0),
+                                            ..Default::default()
+                                        },
+                                        flex_direction: FlexDirection::Column,
+                                        justify_content: JustifyContent::FlexStart,
+                                        align_items: AlignItems::FlexEnd,
+                                        ..default()
+                                    },
                                     children![
-                                        Text::new("Save"),
-                                        button_text_font.clone(),
-                                        TextColor(TEXT_COLOR),
+                                        (
+                                            Button,
+                                            button_node.clone(),
+                                            BackgroundColor(NORMAL_BUTTON),
+                                            PauseButtonAction::Save,
+                                            children![
+                                                Text::new("Save"),
+                                                button_text_font.clone(),
+                                                TextColor(TEXT_COLOR),
+                                            ],
+                                        ),
+                                        (
+                                            Button,
+                                            button_node.clone(),
+                                            BackgroundColor(NORMAL_BUTTON),
+                                            PauseButtonAction::Load,
+                                            children![
+                                                Text::new("Load"),
+                                                button_text_font.clone(),
+                                                TextColor(TEXT_COLOR),
+                                            ],
+                                        ),
+                                        (
+                                            Button,
+                                            button_node.clone(),
+                                            BackgroundColor(NORMAL_BUTTON),
+                                            PauseButtonAction::Settings,
+                                            children![
+                                                Text::new("Settings"),
+                                                button_text_font.clone(),
+                                                TextColor(TEXT_COLOR),
+                                            ]
+                                        ),
+                                        (
+                                            Button,
+                                            button_node.clone(),
+                                            BackgroundColor(NORMAL_BUTTON),
+                                            PauseButtonAction::MainMenu,
+                                            children![
+                                                Text::new("Main Menu"),
+                                                button_text_font.clone(),
+                                                TextColor(TEXT_COLOR),
+                                            ]
+                                        ),
+                                        (
+                                            Button,
+                                            button_node.clone(),
+                                            BackgroundColor(NORMAL_BUTTON),
+                                            PauseButtonAction::Quit,
+                                            children![
+                                                Text::new("Quit"),
+                                                button_text_font.clone(),
+                                                TextColor(TEXT_COLOR),
+                                            ]
+                                        ),
                                     ],
-                                ),
-                                (
-                                    Button,
-                                    button_node.clone(),
-                                    BackgroundColor(NORMAL_BUTTON),
-                                    PauseButtonAction::Load,
-                                    children![
-                                        Text::new("Load"),
-                                        button_text_font.clone(),
-                                        TextColor(TEXT_COLOR),
-                                    ],
-                                ),
-                                (
-                                    Button,
-                                    button_node.clone(),
-                                    BackgroundColor(NORMAL_BUTTON),
-                                    PauseButtonAction::Settings,
-                                    children![
-                                        Text::new("Settings"),
-                                        button_text_font.clone(),
-                                        TextColor(TEXT_COLOR),
-                                    ]
-                                ),
-                                (
-                                    Button,
-                                    button_node.clone(),
-                                    BackgroundColor(NORMAL_BUTTON),
-                                    PauseButtonAction::MainMenu,
-                                    children![
-                                        Text::new("Main Menu"),
-                                        button_text_font.clone(),
-                                        TextColor(TEXT_COLOR),
-                                    ]
-                                ),
-                                (
-                                    Button,
-                                    button_node.clone(),
-                                    BackgroundColor(NORMAL_BUTTON),
-                                    PauseButtonAction::Quit,
-                                    children![
-                                        Text::new("Quit"),
-                                        button_text_font.clone(),
-                                        TextColor(TEXT_COLOR),
-                                    ]
-                                ),
-                            ]
-                        ));
+                                ));
+                            });
                     });
-                });
                 // change the game state to paused and the pause state to pause menu
                 next_in_game_state.set(InGameState::Paused);
                 next_pause_menu_state.set(PauseState::PauseMenu);
             }
-            _ => {println!(">! Error: InGameState and PauseState do not match");}
+            _ => {
+                println!(">! Error: InGameState and PauseState do not match");
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
-use crate::utils::style::{
-    HOVERED_BUTTON, HOVERED_PRESSED_BUTTON, NORMAL_BUTTON, PRESSED_BUTTON,
-};
+use crate::utils::style::{HOVERED_BUTTON, HOVERED_PRESSED_BUTTON, NORMAL_BUTTON, PRESSED_BUTTON};
 
 // Tag component used to mark which setting is currently selected
 #[derive(Component)]

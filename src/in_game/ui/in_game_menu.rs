@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
-use crate::{in_game::{InGameState, PauseState}, setting::key_map, utils::style::TEXT_COLOR};
+use crate::{
+    in_game::{InGameState, PauseState},
+    setting::key_map,
+    utils::style::TEXT_COLOR,
+};
 
 #[derive(Component)]
 pub struct OnInGameMenuScreen;
@@ -53,7 +57,9 @@ pub fn toggle_in_game_menu(
                 next_in_game_state.set(InGameState::Paused);
                 next_pause_menu_state.set(PauseState::InGameMenu);
             }
-            _ => {println!(">! Error: InGameState and PauseState do not match");}
+            _ => {
+                println!(">! Error: InGameState and PauseState do not match");
+            }
         }
     }
 }

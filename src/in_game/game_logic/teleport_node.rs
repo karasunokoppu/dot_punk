@@ -1,7 +1,13 @@
 use avian2d::prelude::CollidingEntities;
 use bevy::prelude::*;
 
-use crate::in_game::{world::{map::components::{TeleportNode, TeleportNodeMarker}, ActiveDatas}, InGameState};
+use crate::in_game::{
+    InGameState,
+    world::{
+        ActiveDatas,
+        map::components::{TeleportNode, TeleportNodeMarker},
+    },
+};
 
 pub fn detect_teleport_node_colliding(
     query: Query<(Entity, &CollidingEntities)>,

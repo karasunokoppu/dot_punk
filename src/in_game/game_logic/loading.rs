@@ -1,15 +1,35 @@
-use bevy::prelude::*;
 use avian2d::prelude::*;
+use bevy::prelude::*;
 
-use crate::{despawn_screen, in_game::{world::{map::{self, components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker}}, ActiveDatas, InGameEntityMarker}, InGameState}, utils::style::TEXT_COLOR, GameState};
+use crate::{
+    GameState, despawn_screen,
+    in_game::{
+        InGameState,
+        world::{
+            ActiveDatas, InGameEntityMarker,
+            map::{
+                self,
+                components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
+            },
+        },
+    },
+    utils::style::TEXT_COLOR,
+};
 
 pub fn loading_plugin(app: &mut App) {
-    app.add_systems(OnEnter(InGameState::Loading), (
-        loading_setup,
-        despawn_screen::<InGameEntityMarker>,
-        set_game_stage,
-    ).chain())
-    .add_systems(OnExit(InGameState::Loading), despawn_screen::<OnLoadingScreen>);
+    app.add_systems(
+        OnEnter(InGameState::Loading),
+        (
+            loading_setup,
+            despawn_screen::<InGameEntityMarker>,
+            set_game_stage,
+        )
+            .chain(),
+    )
+    .add_systems(
+        OnExit(InGameState::Loading),
+        despawn_screen::<OnLoadingScreen>,
+    );
 }
 
 #[derive(Component)]
@@ -17,32 +37,34 @@ pub struct OnLoadingScreen;
 
 fn loading_setup(mut commands: Commands) {
     // Setup the loading screen UI here
-    commands.spawn((
-        Node {
-            align_items: AlignItems::Center,
-            justify_content: JustifyContent::Center,
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            ..default()
-        },
-        BackgroundColor(Color::srgb(0.5, 0.5, 0.5)),
-        ZIndex(100),
-        OnLoadingScreen,
-    )).with_children(|parent| {
-        parent.spawn((
-            Text::new("Loading..."),
-            TextFont {
-                        font_size: 67.0,
-                        ..default()
-                    },
-                    TextColor(TEXT_COLOR),
+    commands
+        .spawn((
             Node {
-                width: Val::Px(200.0),
-                height: Val::Px(50.0),
+                align_items: AlignItems::Center,
+                justify_content: JustifyContent::Center,
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
                 ..default()
             },
-        ));
-    });
+            BackgroundColor(Color::srgb(0.5, 0.5, 0.5)),
+            ZIndex(100),
+            OnLoadingScreen,
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                Text::new("Loading..."),
+                TextFont {
+                    font_size: 67.0,
+                    ..default()
+                },
+                TextColor(TEXT_COLOR),
+                Node {
+                    width: Val::Px(200.0),
+                    height: Val::Px(50.0),
+                    ..default()
+                },
+            ));
+        });
 }
 
 fn set_game_stage(
@@ -71,15 +93,19 @@ fn set_game_stage(
                     RigidBody::Static,
                     Collider::segment(
                         Vec2::new(wall_collider.start_node.x, wall_collider.start_node.y),
-                        Vec2::new(wall_collider.end_node.x, wall_collider.end_node.y)
-                    )
+                        Vec2::new(wall_collider.end_node.x, wall_collider.end_node.y),
+                    ),
                 ));
             }
             // Spawn teleport nodes
             for teleport_node in &map.teleport_nodes {
                 commands.spawn((
                     InGameEntityMarker,
-                    Transform::from_xyz(teleport_node.node_position.x, teleport_node.node_position.y, 0.0),
+                    Transform::from_xyz(
+                        teleport_node.node_position.x,
+                        teleport_node.node_position.y,
+                        0.0,
+                    ),
                     Collider::circle(20.0),
                     RigidBody::Static,
                     TeleportNodeMarker,
@@ -89,7 +115,7 @@ fn set_game_stage(
                         node_position: teleport_node.node_position,
                         target_map: teleport_node.target_map,
                         teleport_position: teleport_node.teleport_position,
-                    }
+                    },
                 ));
             }
         }
@@ -102,7 +128,11 @@ fn set_game_stage(
                 Collider::circle(20.0),
                 LockedAxes::ROTATION_LOCKED,
                 CollidingEntities::default(),
-                Transform::from_xyz(r_active_datas.teleport_position.x, r_active_datas.teleport_position.y, 0.0),
+                Transform::from_xyz(
+                    r_active_datas.teleport_position.x,
+                    r_active_datas.teleport_position.y,
+                    0.0,
+                ),
             ));
         }
     }

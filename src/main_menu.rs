@@ -4,7 +4,13 @@ pub mod setting_ui;
 use bevy::prelude::*;
 
 use crate::{
-    despawn_screen, in_game::world::{ActiveDatas, Position}, main_menu::main_ui::{MenuButtonAction, OnMainMenuScreen}, utils::button::button_system, GameState
+    GameState, despawn_screen,
+    in_game::world::{ActiveDatas, Position},
+    main_menu::{
+        main_ui::{MenuButtonAction, OnMainMenuScreen},
+        setting_ui::OnSettingsMenuScreen,
+    },
+    utils::button::button_system,
 };
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
@@ -21,47 +27,27 @@ pub fn menu_plugin(app: &mut App) {
         .add_systems(OnEnter(MenuState::Main), main_ui::main_menu_setup)
         .add_systems(OnExit(MenuState::Main), despawn_screen::<OnMainMenuScreen>)
         .add_systems(
+            OnEnter(MenuState::Settings),
+            setting_ui::main_setting_menu_setup,
+        )
+        .add_systems(
+            OnExit(MenuState::Settings),
+            despawn_screen::<OnSettingsMenuScreen>,
+        )
+        .add_systems(
             Update,
-            (menu_action, button_system).run_if(in_state(GameState::MainMenu)),
+            (button_system).run_if(in_state(GameState::MainMenu)),
+        )
+        .add_systems(
+            Update,
+            (main_ui::main_menu_action,).run_if(in_state(MenuState::Main))
+        )
+        .add_systems(
+            Update,
+            (setting_ui::setting_menu_action).run_if(in_state(MenuState::Settings))
         );
 }
 
 pub fn menu_setup(mut menu_state: ResMut<NextState<MenuState>>) {
     menu_state.set(MenuState::Main);
-}
-
-pub fn menu_action(
-    interaction_query: Query<
-        (&Interaction, &MenuButtonAction),
-        (Changed<Interaction>, With<Button>),
-    >,
-    mut app_exit_events: EventWriter<AppExit>,
-    mut menu_state: ResMut<NextState<MenuState>>,
-    mut game_state: ResMut<NextState<GameState>>,
-    mut r_active_datas: ResMut<ActiveDatas>,
-) {
-    for (interaction, menu_button_action) in &interaction_query {
-        if *interaction == Interaction::Pressed {
-            match menu_button_action {
-                MenuButtonAction::Quit => {
-                    app_exit_events.write(AppExit::Success);
-                }
-                MenuButtonAction::NewPlay => {
-                    game_state.set(GameState::InGame);
-                    menu_state.set(MenuState::Disabled);
-                }
-                MenuButtonAction::ContinuePlay => {
-                    //TODO: [実装]
-                    r_active_datas.active_map_id = 1;
-                    r_active_datas.teleport_map = 1;
-                    r_active_datas.teleport_position = Position { x: 0.0, y: 0.0 };
-                    println!("Push ContinuePlay");
-                    game_state.set(GameState::InGame);
-                    menu_state.set(MenuState::Disabled);
-                }
-                MenuButtonAction::Settings => menu_state.set(MenuState::Settings),
-                MenuButtonAction::BackToMainMenu => menu_state.set(MenuState::Main),
-            }
-        }
-    }
 }

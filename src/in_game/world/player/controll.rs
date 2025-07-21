@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use avian2d::prelude::*;
+use bevy::prelude::*;
 
 use crate::{in_game::world::map::components::PlayerMarker, setting::game_setting::PLAYER_SPEED};
 

@@ -5,8 +5,8 @@ mod setting;
 mod splash;
 mod utils;
 
-use bevy::prelude::*;
 use avian2d::prelude::*;
+use bevy::prelude::*;
 
 const WINDOW_WIDTH: f32 = 1200.;
 const WINDOW_HIGHT: f32 = 800.;
@@ -14,14 +14,15 @@ const WINDOW_HIGHT: f32 = 800.;
 fn main() {
     App::new()
         .add_plugins((
-            DefaultPlugins.set(ImagePlugin::default_nearest())
-            .set(WindowPlugin{
-                primary_window: Some(Window {
-                    resolution: (WINDOW_WIDTH, WINDOW_HIGHT).into(),
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        resolution: (WINDOW_WIDTH, WINDOW_HIGHT).into(),
+                        ..default()
+                    }),
                     ..default()
                 }),
-                ..default()
-            }),
             PhysicsPlugins::default(),
             PhysicsDebugPlugin::default(),
         ))
@@ -32,7 +33,7 @@ fn main() {
             splash::splash_plugin,
             setting::setting_plugin,
             main_menu::menu_plugin,
-            in_game::in_game_plugin
+            in_game::in_game_plugin,
         ))
         .run();
 }
