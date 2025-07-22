@@ -157,7 +157,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                     },
                     BackgroundColor(Color::BLACK),
                     MainSettingMenuState::Display,
-                ));
+                ));//TODO [Display設定UIを実装]
                 parent.spawn((
                     Node{
                         width: Val::Percent(100.),
@@ -167,7 +167,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                     },
                     BackgroundColor(Color::WHITE),
                     MainSettingMenuState::Sound,
-                ));
+                ));//TODO [Sound設定UIを実装]
                 parent.spawn((
                     Node{
                         width: Val::Percent(100.),
@@ -177,7 +177,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                     },
                     BackgroundColor(Color::srgb(1.0, 0.0, 0.0)),
                     MainSettingMenuState::KeyBind,
-                ));
+                ));//TODO [KeyBind設定UIを実装]
                 parent.spawn((
                     Node{
                         width: Val::Percent(100.),
@@ -187,7 +187,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                     },
                     BackgroundColor(Color::srgb(0.0, 1.0, 0.0)),
                     MainSettingMenuState::Interface,
-                ));
+                ));//TODO [Interface設定UIを実装]
             });
         });
 }
@@ -204,7 +204,6 @@ pub fn setting_menu_action(
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
-                //TODO [処理を実装]
                 MainSettingMenuSideBarAction::Display => {
                     swap_setting_menu(MainSettingMenuState::Display, &mut target_bundle);
                     main_setting_menu_state.set(MainSettingMenuState::Display);
