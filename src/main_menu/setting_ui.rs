@@ -1,12 +1,14 @@
 use bevy::prelude::*;
 
-use crate::utils::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR};
+use crate::{main_menu::MenuState, utils::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR}};
 
 // Tag component used to tag entities added on the settings menu screen
 #[derive(Component)]
 pub struct OnSettingsMenuScreen;
+#[derive(Component)]
+pub struct OnSettingsMenu;
 
-#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
+#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States, Component)]
 pub enum MainSettingMenuState {
     #[default]
     Disabled,
@@ -22,11 +24,11 @@ pub enum MainSettingMenuSideBarAction {
     Sound,
     KeyBind,
     Interface,
-    Quit,
+    Back,
 }
 //TODO [設定UIを作成。ゲーム内設定も実装]
 
-pub fn main_setting_menu_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn main_setting_menu_setup(mut commands: Commands) {
     // Common style for Side Bar buttons on the screen
     let side_button_node = Node {
         width: Val::Px(300.0),
@@ -50,6 +52,7 @@ pub fn main_setting_menu_setup(mut commands: Commands, asset_server: Res<AssetSe
                 ..default()
             },
             BackgroundColor(BACK_GROUND_COLOR),
+            OnSettingsMenuScreen,
         ))
         .with_children(|parent| {
             //2. Side Bar
@@ -124,11 +127,11 @@ pub fn main_setting_menu_setup(mut commands: Commands, asset_server: Res<AssetSe
                         Button,
                         side_button_node.clone(),
                         BackgroundColor(NORMAL_BUTTON),
-                        MainSettingMenuSideBarAction::Quit,
+                        MainSettingMenuSideBarAction::Back,
                         children![
                             // (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
                             (
-                                Text::new("Quit"),
+                                Text::new("Back"),
                                 side_button_text_font.clone(),
                                 TextColor(TEXT_COLOR),
                             ),
@@ -137,11 +140,55 @@ pub fn main_setting_menu_setup(mut commands: Commands, asset_server: Res<AssetSe
                 ],
             ));
             //2. Setting Menus
-            parent.spawn((Node {
-                width: Val::Percent(70.),
-                height: Val::Percent(100.),
-                ..default()
-            },));
+            parent.spawn((
+                Node {
+                    width: Val::Percent(70.),
+                    height: Val::Percent(100.),
+                    ..default()
+                },
+                OnSettingsMenu,
+            )).with_children(|parent| {
+                parent.spawn((
+                    Node{
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                        display: Display::None,
+                        ..default()
+                    },
+                    BackgroundColor(Color::BLACK),
+                    MainSettingMenuState::Display,
+                ));
+                parent.spawn((
+                    Node{
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                        display: Display::None,
+                        ..default()
+                    },
+                    BackgroundColor(Color::WHITE),
+                    MainSettingMenuState::Sound,
+                ));
+                parent.spawn((
+                    Node{
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                        display: Display::None,
+                        ..default()
+                    },
+                    BackgroundColor(Color::srgb(1.0, 0.0, 0.0)),
+                    MainSettingMenuState::KeyBind,
+                ));
+                parent.spawn((
+                    Node{
+                        width: Val::Percent(100.),
+                        height: Val::Percent(100.),
+                        display: Display::None,
+                        ..default()
+                    },
+                    BackgroundColor(Color::srgb(0.0, 1.0, 0.0)),
+                    MainSettingMenuState::Interface,
+                ));
+            });
         });
 }
 
@@ -150,18 +197,48 @@ pub fn setting_menu_action(
         (&Interaction, &MainSettingMenuSideBarAction),
         (Changed<Interaction>, With<Button>),
     >,
-    mut app_exit_events: EventWriter<AppExit>,
+    mut next_menu_state: ResMut<NextState<MenuState>>,
+    mut main_setting_menu_state: ResMut<NextState<MainSettingMenuState>>,
+    mut target_bundle: Query<(&mut Node, &MainSettingMenuState)>
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 //TODO [処理を実装]
-                MainSettingMenuSideBarAction::Display => {}
-                MainSettingMenuSideBarAction::Sound => {}
-                MainSettingMenuSideBarAction::KeyBind => {}
-                MainSettingMenuSideBarAction::Interface => {}
-                MainSettingMenuSideBarAction::Quit => {}
+                MainSettingMenuSideBarAction::Display => {
+                    swap_setting_menu(MainSettingMenuState::Display, &mut target_bundle);
+                    main_setting_menu_state.set(MainSettingMenuState::Display);
+                }
+                MainSettingMenuSideBarAction::Sound => {
+                    swap_setting_menu(MainSettingMenuState::Sound, &mut target_bundle);
+                    main_setting_menu_state.set(MainSettingMenuState::Sound);
+                }
+                MainSettingMenuSideBarAction::KeyBind => {
+                    swap_setting_menu(MainSettingMenuState::KeyBind, &mut target_bundle);
+                    main_setting_menu_state.set(MainSettingMenuState::KeyBind);
+                }
+                MainSettingMenuSideBarAction::Interface => {
+                    swap_setting_menu(MainSettingMenuState::Interface, &mut target_bundle);
+                    main_setting_menu_state.set(MainSettingMenuState::Interface);
+                }
+                MainSettingMenuSideBarAction::Back => {
+                    main_setting_menu_state.set(MainSettingMenuState::Disabled);
+                    next_menu_state.set(MenuState::Main);
+                }
             }
+        }
+    }
+}
+
+pub fn swap_setting_menu(
+    activated_setting: MainSettingMenuState,
+    target_bundle: &mut  Query<(&mut Node, &MainSettingMenuState)>
+) {
+    for (mut node, main_setting_menu_state) in target_bundle {
+        if *main_setting_menu_state == activated_setting {
+            node.display = Display::Block
+        }else {
+            node.display = Display::None
         }
     }
 }

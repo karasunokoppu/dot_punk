@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 use crate::{
     GameState, despawn_screen,
-    in_game::{InGameState, PauseState},
+    in_game::PauseState,
     utils,
 };
 

@@ -2,15 +2,12 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    GameState, despawn_screen,
+    despawn_screen,
     in_game::{
         InGameState,
         world::{
             ActiveDatas, InGameEntityMarker,
-            map::{
-                self,
-                components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
-            },
+            map::components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
         },
     },
     utils::style::TEXT_COLOR,

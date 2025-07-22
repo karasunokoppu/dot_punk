@@ -1,5 +1,5 @@
 pub mod components;
-pub mod systems;
+pub mod teleport_node;
 
 use bevy::prelude::*;
 

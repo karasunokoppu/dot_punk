@@ -40,14 +40,6 @@ pub fn toggle_pause_menu(
         align_items: AlignItems::Center,
         ..default()
     };
-    let button_icon_node = Node {
-        width: Val::Px(30.0),
-        // This takes the icons out of the flexbox flow, to be positioned exactly
-        position_type: PositionType::Absolute,
-        // The icon will be close to the left border of the button
-        left: Val::Px(10.0),
-        ..default()
-    };
     let button_text_font = TextFont {
         font_size: 33.0,
         ..default()

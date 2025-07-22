@@ -3,7 +3,7 @@ pub mod controll;
 
 use bevy::prelude::*;
 
-use crate::in_game::{InGameState, game_logic::teleport_node::detect_teleport_node_colliding};
+use crate::in_game::{InGameState, world::map::teleport_node::detect_teleport_node_colliding};
 
 pub fn player_plugin(app: &mut App) {
     app.add_systems(
