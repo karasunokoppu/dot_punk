@@ -1,12 +1,11 @@
-mod in_game;
-mod main_menu;
-mod save_system;
-mod setting;
-mod splash;
-mod utils;
+mod core;
+mod game;
+mod states;
 
 use avian2d::prelude::*;
 use bevy::prelude::*;
+
+use crate::core::setting::key_map;
 
 const WINDOW_WIDTH: f32 = 1200.;
 const WINDOW_HIGHT: f32 = 800.;
@@ -27,13 +26,13 @@ fn main() {
             PhysicsDebugPlugin::default(),
         ))
         .insert_resource(Gravity::ZERO)
+        .init_resource::<key_map::KeyMap>()
         .init_state::<GameState>()
         .add_systems(Startup, setup_camera)
         .add_plugins((
-            splash::splash_plugin,
-            setting::setting_plugin,
-            main_menu::menu_plugin,
-            in_game::in_game_plugin,
+            states::splash::splash_plugin,
+            states::main_menu::menu_plugin,
+            states::in_game::in_game_plugin,
         ))
         .run();
 }
