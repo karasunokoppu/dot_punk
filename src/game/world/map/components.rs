@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
-use crate::{
-    core::component::Position,
-    game::world::SpriteData,
+use crate::core::component::{
+    Position,
+    SpriteData
 };
 
 #[derive(Component)]

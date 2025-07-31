@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::component::Position,
-    game::world::{
-        SpriteData,
-        map::components::{Map, Maps, TeleportNode, WallColliderNode},
+    core::component::{
+        Position,
+        SpriteData
     },
+    game::world::map::components::{Map, Maps, TeleportNode, WallColliderNode},
 };
 
 //How to register stage to the game

@@ -69,6 +69,7 @@ pub fn toggle_pause_menu(
                             ..default()
                         },
                         BackgroundColor(Color::srgba(0.1, 0.1, 0.1, 0.5)),
+                        ZIndex(100),
                         OnPauseMenuScreen,
                     ))
                     .with_children(|parent| {

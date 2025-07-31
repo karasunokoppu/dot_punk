@@ -14,8 +14,8 @@ pub fn in_game_ui_plugin(app: &mut App) {
         Update,
         (
             ui::button::button_system,
-            pause_menu::toggle_pause_menu,
             pause_menu::pause_menu_action,
+            pause_menu::toggle_pause_menu,
             in_game_menu::toggle_in_game_menu,
         )
             .run_if(in_state(GameState::InGame)),

@@ -23,6 +23,11 @@ pub fn menu_plugin(app: &mut App) {
         .init_state::<MainSettingMenuState>()
         //Main Menu
         .add_systems(OnEnter(GameState::MainMenu), menu_setup)
+        //Main Menu
+        .add_systems(
+            Update,
+            (button_system).run_if(in_state(GameState::MainMenu)),
+        )
         .add_systems(OnEnter(MenuState::Main), main_ui::main_menu_setup)
         .add_systems(
             Update,
@@ -38,12 +43,7 @@ pub fn menu_plugin(app: &mut App) {
                 // setting_ui::swap_setting_menu,
             ).run_if(in_state(MenuState::Settings))
         )
-        .add_systems(OnExit(MenuState::Settings),despawn_screen::<OnSettingsMenuScreen>)
-        //Main Menu
-        .add_systems(
-            Update,
-            (button_system).run_if(in_state(GameState::MainMenu)),
-        );
+        .add_systems(OnExit(MenuState::Settings),despawn_screen::<OnSettingsMenuScreen>);
 }
 
 pub fn menu_setup(mut menu_state: ResMut<NextState<MenuState>>) {

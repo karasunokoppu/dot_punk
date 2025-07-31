@@ -5,13 +5,16 @@ use bevy::prelude::*;
 use crate::{
     GameState, despawn_screen,
     game::{
-        world::{InGameEntityMarker, player},
+        world::player,
         ui,
     }
 };
 
 #[derive(Component)]
 pub struct OnInGameScreen;
+
+#[derive(Component)]
+pub struct InGameEntityMarker;
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
 pub enum InGameState {

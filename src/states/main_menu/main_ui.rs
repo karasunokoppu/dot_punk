@@ -1,9 +1,9 @@
 use crate::{
     GameState,
     states::main_menu::MenuState,
-    game::world::ActiveDatas,
     core::{
         component::Position,
+        resource::ActiveDatas,
         ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR}
     },
 };

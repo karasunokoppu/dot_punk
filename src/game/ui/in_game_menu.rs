@@ -51,6 +51,7 @@ pub fn toggle_in_game_menu(
                         ..default()
                     },
                     TextColor(TEXT_COLOR),
+                    ZIndex(100),
                     OnInGameMenuScreen,
                 ));
                 // change the game state to paused and the pause state to in-game menu

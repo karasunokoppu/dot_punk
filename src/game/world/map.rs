@@ -4,12 +4,10 @@ pub mod teleport_node;
 use bevy::prelude::*;
 
 use crate::{
-    GameState,
-    game::world::{
-        ActiveDatas,
+    core::resource::ActiveDatas, game::world::{
         map::components::{Map, Maps},
         stage::stage001::register_stage001,
-    },
+    }, GameState
 };
 
 pub fn map_plugin(app: &mut App) {

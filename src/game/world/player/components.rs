@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::world::SpriteData;
+use crate::core::component::SpriteData;
 use crate::core::component::Position;
 
 #[derive(Resource)]
