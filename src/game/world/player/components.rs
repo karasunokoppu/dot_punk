@@ -8,18 +8,29 @@ pub struct Player {
     pub name: String,
     pub sprite: SpriteData,
     pub position: Position,
+    pub move_states: MoveStates,
+    pub direction: Direction,
 }
 
+#[derive(Default)]
 pub enum MoveStates {
+    #[default]
     Stand,
     Run,
     Jump,
 }
+
+#[derive(Default, PartialEq, Debug, Clone)]
 pub enum Direction {
-    Front,
-    Back,
+    TopRight,
+    TopLeft,
+    BottomRight,
+    BottomLeft,
+    #[default]
+    Top,
+    Bottom,
     Right,
-    Left,//TODO [斜めの実装を検討]
+    Left,
 }
 
 impl Default for Player {
@@ -30,8 +41,12 @@ impl Default for Player {
                 z_index: 10, //10..19
                 image: "default_player_image.png".to_string(),
             },
-            //TODO [移動するたびにプレイヤーの座標を更新する]
-            position: Position { x: 0.0, y: 0.0 },
+            //TODO [更新プログラム作成]
+            position: Position::default(),
+            //TODO [更新プログラム作成]
+            move_states: MoveStates::default(),
+            //TODO [更新プログラム作成]
+            direction: Direction::default(),
         }
     }
 }

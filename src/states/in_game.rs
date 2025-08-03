@@ -43,7 +43,6 @@ pub fn in_game_plugin(app: &mut App) {
         .add_plugins((
             loading::loading_plugin,
             ui::in_game_ui_plugin,
-            player::player_plugin,
         ))
         .add_systems(OnEnter(GameState::InGame), start_game)
         .add_systems(OnExit(GameState::InGame),despawn_screen::<InGameEntityMarker>);
