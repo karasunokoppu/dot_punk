@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
 use crate::{
-    states::in_game::{InGameState, PauseState},
     core::setting::key_map,
     core::ui::style::TEXT_COLOR,
+    states::in_game::{InGameState, PauseState},
 };
 
 #[derive(Component)]

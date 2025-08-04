@@ -2,7 +2,10 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::ActiveDatas, ui::style::TEXT_COLOR}, despawn_screen, game::world::map::components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker}, states::in_game::{InGameEntityMarker, InGameState}
+    core::{resource::ActiveDatas, ui::style::TEXT_COLOR},
+    despawn_screen,
+    game::world::map::components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
+    states::in_game::{InGameEntityMarker, InGameState},
 };
 
 pub fn loading_plugin(app: &mut App) {
@@ -12,7 +15,8 @@ pub fn loading_plugin(app: &mut App) {
             loading_setup,
             despawn_screen::<InGameEntityMarker>,
             set_game_stage,
-        ).chain(),
+        )
+            .chain(),
     )
     .add_systems(
         OnExit(InGameState::Loading),

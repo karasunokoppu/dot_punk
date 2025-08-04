@@ -9,6 +9,8 @@ pub struct KeyMap {
     pub move_down: KeyCode,
     pub move_left: KeyCode,
     pub move_right: KeyCode,
+    pub run: KeyCode,
+    pub jump: KeyCode,
 }
 
 impl Default for KeyMap {
@@ -23,6 +25,8 @@ impl Default for KeyMap {
             move_down: KeyCode::KeyS,
             move_left: KeyCode::KeyA,
             move_right: KeyCode::KeyD,
+            run: KeyCode::ShiftLeft,
+            jump: KeyCode::Space,
         }
     }
 }

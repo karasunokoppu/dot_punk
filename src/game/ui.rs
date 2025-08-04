@@ -3,11 +3,7 @@ pub mod pause_menu;
 
 use bevy::prelude::*;
 
-use crate::{
-    GameState, despawn_screen,
-    states::in_game::PauseState,
-    core::ui,
-};
+use crate::{GameState, core::ui, despawn_screen, states::in_game::PauseState};
 
 pub fn in_game_ui_plugin(app: &mut App) {
     app.add_systems(

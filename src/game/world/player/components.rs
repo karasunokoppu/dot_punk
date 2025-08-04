@@ -1,23 +1,14 @@
 use bevy::prelude::*;
 
-use crate::core::component::SpriteData;
 use crate::core::component::Position;
+use crate::core::component::SpriteData;
 
 #[derive(Resource)]
 pub struct Player {
     pub name: String,
     pub sprite: SpriteData,
     pub position: Position,
-    pub move_states: MoveStates,
     pub direction: Direction,
-}
-
-#[derive(Default)]
-pub enum MoveStates {
-    #[default]
-    Stand,
-    Run,
-    Jump,
 }
 
 #[derive(Default, PartialEq, Debug, Clone)]
@@ -43,8 +34,6 @@ impl Default for Player {
             },
             //TODO [更新プログラム作成]
             position: Position::default(),
-            //TODO [更新プログラム作成]
-            move_states: MoveStates::default(),
             //TODO [更新プログラム作成]
             direction: Direction::default(),
         }

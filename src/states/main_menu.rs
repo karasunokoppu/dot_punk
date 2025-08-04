@@ -4,10 +4,13 @@ pub mod setting_ui;
 use bevy::prelude::*;
 
 use crate::{
-    despawn_screen, states::main_menu::{
+    GameState,
+    core::ui::button::button_system,
+    despawn_screen,
+    states::main_menu::{
         main_ui::OnMainMenuScreen,
         setting_ui::{MainSettingMenuState, OnSettingsMenuScreen},
-    }, core::ui::button::button_system, GameState
+    },
 };
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
@@ -31,19 +34,26 @@ pub fn menu_plugin(app: &mut App) {
         .add_systems(OnEnter(MenuState::Main), main_ui::main_menu_setup)
         .add_systems(
             Update,
-            (main_ui::main_menu_action,).run_if(in_state(MenuState::Main))
+            (main_ui::main_menu_action,).run_if(in_state(MenuState::Main)),
         )
         .add_systems(OnExit(MenuState::Main), despawn_screen::<OnMainMenuScreen>)
         //Setting Menu
-        .add_systems(OnEnter(MenuState::Settings),setting_ui::main_setting_menu_setup)
+        .add_systems(
+            OnEnter(MenuState::Settings),
+            setting_ui::main_setting_menu_setup,
+        )
         .add_systems(
             Update,
             (
                 setting_ui::setting_menu_action,
                 // setting_ui::swap_setting_menu,
-            ).run_if(in_state(MenuState::Settings))
+            )
+                .run_if(in_state(MenuState::Settings)),
         )
-        .add_systems(OnExit(MenuState::Settings),despawn_screen::<OnSettingsMenuScreen>);
+        .add_systems(
+            OnExit(MenuState::Settings),
+            despawn_screen::<OnSettingsMenuScreen>,
+        );
 }
 
 pub fn menu_setup(mut menu_state: ResMut<NextState<MenuState>>) {

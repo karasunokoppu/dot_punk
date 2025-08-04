@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{states::main_menu::MenuState, core::ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR}};
+use crate::{
+    core::ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
+    states::main_menu::MenuState,
+};
 
 // Tag component used to tag entities added on the settings menu screen
 #[derive(Component)]
@@ -140,55 +143,57 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                 ],
             ));
             //2. Setting Menus
-            parent.spawn((
-                Node {
-                    width: Val::Percent(70.),
-                    height: Val::Percent(100.),
-                    ..default()
-                },
-                OnSettingsMenu,
-            )).with_children(|parent| {
-                parent.spawn((
-                    Node{
-                        width: Val::Percent(100.),
+            parent
+                .spawn((
+                    Node {
+                        width: Val::Percent(70.),
                         height: Val::Percent(100.),
-                        display: Display::None,
                         ..default()
                     },
-                    BackgroundColor(Color::BLACK),
-                    MainSettingMenuState::Display,
-                ));//TODO [Display設定UIを実装]
-                parent.spawn((
-                    Node{
-                        width: Val::Percent(100.),
-                        height: Val::Percent(100.),
-                        display: Display::None,
-                        ..default()
-                    },
-                    BackgroundColor(Color::WHITE),
-                    MainSettingMenuState::Sound,
-                ));//TODO [Sound設定UIを実装]
-                parent.spawn((
-                    Node{
-                        width: Val::Percent(100.),
-                        height: Val::Percent(100.),
-                        display: Display::None,
-                        ..default()
-                    },
-                    BackgroundColor(Color::srgb(1.0, 0.0, 0.0)),
-                    MainSettingMenuState::KeyBind,
-                ));//TODO [KeyBind設定UIを実装]
-                parent.spawn((
-                    Node{
-                        width: Val::Percent(100.),
-                        height: Val::Percent(100.),
-                        display: Display::None,
-                        ..default()
-                    },
-                    BackgroundColor(Color::srgb(0.0, 1.0, 0.0)),
-                    MainSettingMenuState::Interface,
-                ));//TODO [Interface設定UIを実装]
-            });
+                    OnSettingsMenu,
+                ))
+                .with_children(|parent| {
+                    parent.spawn((
+                        Node {
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                            display: Display::None,
+                            ..default()
+                        },
+                        BackgroundColor(Color::BLACK),
+                        MainSettingMenuState::Display,
+                    )); //TODO [Display設定UIを実装]
+                    parent.spawn((
+                        Node {
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                            display: Display::None,
+                            ..default()
+                        },
+                        BackgroundColor(Color::WHITE),
+                        MainSettingMenuState::Sound,
+                    )); //TODO [Sound設定UIを実装]
+                    parent.spawn((
+                        Node {
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                            display: Display::None,
+                            ..default()
+                        },
+                        BackgroundColor(Color::srgb(1.0, 0.0, 0.0)),
+                        MainSettingMenuState::KeyBind,
+                    )); //TODO [KeyBind設定UIを実装]
+                    parent.spawn((
+                        Node {
+                            width: Val::Percent(100.),
+                            height: Val::Percent(100.),
+                            display: Display::None,
+                            ..default()
+                        },
+                        BackgroundColor(Color::srgb(0.0, 1.0, 0.0)),
+                        MainSettingMenuState::Interface,
+                    )); //TODO [Interface設定UIを実装]
+                });
         });
 }
 
@@ -199,7 +204,7 @@ pub fn setting_menu_action(
     >,
     mut next_menu_state: ResMut<NextState<MenuState>>,
     mut main_setting_menu_state: ResMut<NextState<MainSettingMenuState>>,
-    mut target_bundle: Query<(&mut Node, &MainSettingMenuState)>
+    mut target_bundle: Query<(&mut Node, &MainSettingMenuState)>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
@@ -231,12 +236,12 @@ pub fn setting_menu_action(
 
 pub fn swap_setting_menu(
     activated_setting: MainSettingMenuState,
-    target_bundle: &mut  Query<(&mut Node, &MainSettingMenuState)>
+    target_bundle: &mut Query<(&mut Node, &MainSettingMenuState)>,
 ) {
     for (mut node, main_setting_menu_state) in target_bundle {
         if *main_setting_menu_state == activated_setting {
             node.display = Display::Block
-        }else {
+        } else {
             node.display = Display::None
         }
     }

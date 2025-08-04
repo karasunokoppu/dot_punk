@@ -1,11 +1,11 @@
 use crate::{
     GameState,
-    states::main_menu::MenuState,
     core::{
         component::Position,
         resource::ActiveDatas,
-        ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR}
+        ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
     },
+    states::main_menu::MenuState,
 };
 use bevy::prelude::*;
 
