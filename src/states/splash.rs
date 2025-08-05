@@ -1,7 +1,7 @@
 use crate::game::world::map::map_plugin;
 
 use crate::game::world::player;
-use crate::{GameState, despawn_screen};
+use crate::{GameState, core::systems::despawn_screen};
 use bevy::prelude::*;
 
 pub fn splash_plugin(app: &mut App) {

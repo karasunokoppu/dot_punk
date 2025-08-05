@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::component::{Position, SpriteData},
+    core::components::{Position, SpriteData},
     game::world::map::components::{Map, Maps, TeleportNode, WallColliderNode},
 };
 

@@ -2,15 +2,15 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::setting::{
+    core::{resource::Player, setting::{
         game_setting::{PLAYER_RUN_SPEED, PLAYER_WARK_SPEED},
         key_map::KeyMap,
-    },
+    }},
     game::world::{
         map::components::PlayerMarker,
-        player::components::{Direction, Player},
+        player::components::Direction,
     },
-    states::in_game::player_states::{ActionStates, JumpState, MoveStates},
+    states::in_game::player_states::{ActionStates, MoveStates},
 };
 
 pub fn move_player(

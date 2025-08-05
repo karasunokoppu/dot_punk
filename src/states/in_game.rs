@@ -4,7 +4,7 @@ pub mod player_states;
 use bevy::prelude::*;
 
 use crate::{
-    GameState, despawn_screen,
+    GameState, core::systems::despawn_screen,
     game::{ui, world::player},
     states::in_game::player_states::{ActionStates, JumpState, MoveStates},
 };

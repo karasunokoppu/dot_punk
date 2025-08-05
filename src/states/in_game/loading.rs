@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 use crate::{
     core::{resource::ActiveDatas, ui::style::TEXT_COLOR},
-    despawn_screen,
+    core::systems::despawn_screen,
     game::world::map::components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
     states::in_game::{InGameEntityMarker, InGameState},
 };

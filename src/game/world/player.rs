@@ -1,11 +1,12 @@
 pub mod animation;
 pub mod components;
 pub mod controll;
+pub mod states_components;
 
 use bevy::prelude::*;
 
 use crate::game::world::map::teleport_node::detect_teleport_node_colliding;
-use crate::game::world::player::components::Player;
+use crate::core::resource::Player;
 use crate::states::in_game::InGameState;
 use crate::states::in_game::player_states::ActionStates;
 
