@@ -23,6 +23,7 @@ fn main() {
                     ..default()
                 }),
             PhysicsPlugins::default(),
+            //TODO [Windowsで実行した際にgizmoが表示されない問題を解決する]
             PhysicsDebugPlugin::default(),
         ))
         .insert_resource(Gravity::ZERO)
