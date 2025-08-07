@@ -94,9 +94,7 @@ pub fn dash_mode(
 ) {
     if keyboard_input.pressed(key_map.run) {
         move_state.set(MoveStates::Run);
-        println!("MoveStates::Run");
     } else {
         move_state.set(MoveStates::Wark);
-        println!("MoveStates::Wark");
     }
 }

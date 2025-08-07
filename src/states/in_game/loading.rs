@@ -65,6 +65,8 @@ fn set_game_stage(
     maps: Res<Maps>,
     assets_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<InGameState>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     for map in &maps.map_list {
         //spawn map sprites
@@ -75,8 +77,8 @@ fn set_game_stage(
                 commands.spawn((
                     InGameEntityMarker,
                     Sprite::from_image(map_image),
-                    Transform::from_xyz(0.0, 0.0, 0.0),
-                    ZIndex(sprite.z_index),
+                    Transform::from_xyz(0.0, 0.0, sprite.z_index as f32),
+                    GlobalZIndex(sprite.z_index),
                 ));
             }
             for wall_collider in &map.wall_colliders {
@@ -96,7 +98,7 @@ fn set_game_stage(
                     Transform::from_xyz(
                         teleport_node.node_position.x,
                         teleport_node.node_position.y,
-                        0.0,
+                        10.0,
                     ),
                     Collider::circle(20.0),
                     RigidBody::Static,
@@ -108,6 +110,10 @@ fn set_game_stage(
                         target_map: teleport_node.target_map,
                         teleport_position: teleport_node.teleport_position,
                     },
+                    GlobalZIndex(10),
+                    //for debugging
+                    Mesh2d(meshes.add(Circle::new(20.0))),
+                    MeshMaterial2d(materials.add(Color::srgb(1.0, 0.5, 0.0))),
                 ));
             }
         }
@@ -123,8 +129,12 @@ fn set_game_stage(
                 Transform::from_xyz(
                     r_active_datas.teleport_position.x,
                     r_active_datas.teleport_position.y,
-                    0.0,
+                    10.0,
                 ),
+                GlobalZIndex(10),
+                //for debugging
+                Mesh2d(meshes.add(Circle::new(20.0))),
+                MeshMaterial2d(materials.add(Color::srgb(0.0, 0.5, 1.0))),
             ));
         }
     }
