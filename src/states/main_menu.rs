@@ -5,8 +5,8 @@ use bevy::prelude::*;
 
 use crate::{
     GameState,
-    core::ui::button::button_system,
     core::systems::despawn_screen,
+    core::ui::button::button_system,
     states::main_menu::{
         main_ui::OnMainMenuScreen,
         setting_ui::{MainSettingMenuState, OnSettingsMenuScreen},

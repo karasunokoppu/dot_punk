@@ -1,4 +1,7 @@
-use crate::{core::components::{Position, SpriteData}, game::world::player::{components::Direction, states_components::EntityStates}};
+use crate::{
+    core::components::{Position, SpriteData},
+    game::world::player::{components::Direction, states_components::EntityStates},
+};
 use bevy::prelude::*;
 
 #[derive(Resource, Default)]
@@ -26,7 +29,6 @@ impl Default for Player {
             },
             //TODO [更新プログラム作成]
             position: Position::default(),
-            //TODO [更新プログラム作成]
             direction: Direction::default(),
             states: EntityStates::default(),
         }

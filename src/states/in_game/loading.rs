@@ -2,8 +2,8 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::ActiveDatas, ui::style::TEXT_COLOR},
     core::systems::despawn_screen,
+    core::{resource::ActiveDatas, ui::style::TEXT_COLOR},
     game::world::map::components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
     states::in_game::{InGameEntityMarker, InGameState},
 };

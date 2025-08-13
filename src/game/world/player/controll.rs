@@ -2,14 +2,15 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::Player, setting::{
-        game_setting::{PLAYER_RUN_SPEED, PLAYER_WARK_SPEED},
-        key_map::KeyMap,
-    }},
-    game::world::{
-        map::components::PlayerMarker,
-        player::components::Direction,
+    core::{
+        components::Position,
+        resource::Player,
+        setting::{
+            game_setting::{PLAYER_RUN_SPEED, PLAYER_WARK_SPEED},
+            key_map::KeyMap,
+        },
     },
+    game::world::{map::components::PlayerMarker, player::components::Direction},
     states::in_game::player_states::{ActionStates, MoveStates},
 };
 
@@ -82,8 +83,22 @@ pub fn move_player(
     }
     //update Player.direction
     if r_player.direction != *new_direction {
-        println!("Player.Direction::{:?}", new_direction.clone());
         r_player.direction = new_direction.clone();
+    }
+}
+
+pub fn update_player_pos_resource(
+    player_vels: Query<(&Transform, &LinearVelocity), With<PlayerMarker>>,
+    mut r_player: ResMut<Player>,
+) {
+    for (transform, vel) in player_vels.iter() {
+        if vel.0 != Vec2::ZERO {
+            println!("Player is moving!");
+            r_player.position = Position {
+                x: transform.translation.x,
+                y: transform.translation.y,
+            };
+        }
     }
 }
 
