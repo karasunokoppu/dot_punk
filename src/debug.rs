@@ -8,6 +8,7 @@ pub fn debug_plungin(app: &mut App) {
         .add_systems(Update, toggle_debug_mode.run_if(in_state(GameState::InGame)))
         .add_systems(Update, (
             update_debug_info_player_position,
+            update_debug_info_player_direction
         ).run_if(in_state(DebugModeState::On)));
 }
 
@@ -18,7 +19,7 @@ pub enum DebugModeState {
     On,
 }
 
-#[derive(Component)]
+#[derive(Component, PartialEq)]
 pub enum DebugInfoMarker{
     PlayerPosition,
     PlayerDirection,
@@ -65,6 +66,7 @@ pub fn spawn_debug_information(mut commands: Commands) {
             TextColor(TEXT_COLOR),
         ));
         //TODO [URLのサンプルを参考にデバッグ情報の表示を実装。https://bevy.org/examples/ui-user-interface/text/]
+        // Player position
         parent.spawn((
             Text("player position: ".to_string()),
             TextFont {
@@ -83,14 +85,42 @@ pub fn spawn_debug_information(mut commands: Commands) {
                 DebugInfoMarker::PlayerPosition,
             ));
         });
+        // Player direction
+        parent.spawn((
+            Text("player direction: ".to_string()),
+            TextFont {
+                font_size: 20.0,
+                ..default()
+            },
+            TextColor(TEXT_COLOR),
+        )).with_children(|parent|{
+            parent.spawn((
+                TextSpan::default(),
+                TextFont {
+                    font_size: 20.0,
+                    ..default()
+                },
+                TextColor(TEXT_COLOR),
+                DebugInfoMarker::PlayerDirection,
+            ));
+        });
     });
 }
 
 pub fn update_debug_info_player_position(
     player: Res<Player>,
-    mut query: Query<&mut TextSpan, With<DebugInfoMarker>>,
+    mut query: Query<(&mut TextSpan, & DebugInfoMarker)>,
 ) {
-    if let Ok(mut text_span) = query.single_mut() {
+    if let Some((mut text_span, _)) = query.iter_mut().find(|(_, marker)| **marker == DebugInfoMarker::PlayerPosition) {
         **text_span = format!("x: {}, y: {}", player.position.x, player.position.y);
+    }
+}
+
+pub fn update_debug_info_player_direction(
+    player: Res<Player>,
+    mut query: Query<(&mut TextSpan, & DebugInfoMarker)>,
+) {
+    if let Some((mut text_span, _)) = query.iter_mut().find(|(_, marker)| **marker == DebugInfoMarker::PlayerDirection) {
+        **text_span = format!("direction: {:?}", player.direction);
     }
 }
