@@ -93,7 +93,6 @@ pub fn update_player_pos_resource(
 ) {
     for (transform, vel) in player_vels.iter() {
         if vel.0 != Vec2::ZERO {
-            println!("Player is moving!");
             r_player.position = Position {
                 x: transform.translation.x,
                 y: transform.translation.y,

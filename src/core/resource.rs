@@ -7,6 +7,7 @@ use bevy::prelude::*;
 #[derive(Resource, Default)]
 pub struct ActiveDatas {
     pub active_map_id: u32,
+    pub active_map_name: String, //TODO [テレポート時に時に設定]
     pub teleport_map: u32,           // Next teleport map ID
     pub teleport_position: Position, // Next teleport node ID
 }
@@ -22,7 +23,7 @@ pub struct Player {
 impl Default for Player {
     fn default() -> Self {
         Player {
-            name: "Player".to_string(),
+            name: "Player Charactor01".to_string(),
             sprite: SpriteData {
                 z_index: 10, //10..19
                 image: "default_player_image.png".to_string(),

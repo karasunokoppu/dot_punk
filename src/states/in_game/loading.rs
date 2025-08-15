@@ -61,7 +61,7 @@ fn loading_setup(mut commands: Commands) {
 
 fn set_game_stage(
     mut commands: Commands,
-    r_active_datas: Res<ActiveDatas>,
+    mut r_active_datas: ResMut<ActiveDatas>,
     maps: Res<Maps>,
     assets_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<InGameState>>,
@@ -116,6 +116,8 @@ fn set_game_stage(
                     MeshMaterial2d(materials.add(Color::srgb(1.0, 0.5, 0.0))),
                 ));
             }
+
+            r_active_datas.active_map_name = map.name.clone();
         }
         //spawn player
         if map.id == r_active_datas.teleport_map {

@@ -1,14 +1,13 @@
 use bevy::prelude::*;
 
-use crate::{core::{resource::Player, systems::despawn_screen, ui::style::TEXT_COLOR}, GameState};
+use crate::{core::{resource::{ActiveDatas, Player}, systems::despawn_screen, ui::style::TEXT_COLOR}, GameState};
 
 pub fn debug_plungin(app: &mut App) {
     app.add_systems(OnEnter(DebugModeState::On), spawn_debug_information)
         .add_systems(OnExit(DebugModeState::On),despawn_screen::<DebugModeMarker>)
         .add_systems(Update, toggle_debug_mode.run_if(in_state(GameState::InGame)))
         .add_systems(Update, (
-            update_debug_info_player_position,
-            update_debug_info_player_direction
+            update_debug_info,
         ).run_if(in_state(DebugModeState::On)));
 }
 
@@ -25,6 +24,7 @@ pub enum DebugInfoMarker{
     PlayerDirection,
     PlayerStatesHP,
     PlayerStatesMP,
+    MapName,
 }
 
 #[derive(Component)]
@@ -44,7 +44,10 @@ pub fn toggle_debug_mode(
     }
 }
 
-pub fn spawn_debug_information(mut commands: Commands) {
+pub fn spawn_debug_information(
+    mut commands: Commands,
+    r_player: Res<Player>,
+) {
     commands.spawn((
         DebugModeMarker,
         Node{
@@ -57,70 +60,108 @@ pub fn spawn_debug_information(mut commands: Commands) {
         BackgroundColor(Color::BLACK.with_alpha(0.4)),
         GlobalZIndex(200),
     )).with_children(|parent| {
-        parent.spawn((
-            Text("Player".to_string()),
-            TextFont {
-                font_size: 30.0,
-                ..default()
-            },
-            TextColor(TEXT_COLOR),
-        ));
-        //TODO [URLのサンプルを参考にデバッグ情報の表示を実装。https://bevy.org/examples/ui-user-interface/text/]
-        // Player position
-        parent.spawn((
-            Text("player position: ".to_string()),
-            TextFont {
-                font_size: 20.0,
-                ..default()
-            },
-            TextColor(TEXT_COLOR),
-        )).with_children(|parent|{
+        parent.spawn(Node{
+            flex_direction: FlexDirection::Column,
+            ..default()
+        }).with_children(|parent| {
+            // Player informations
             parent.spawn((
-                TextSpan::default(),
+                Text("Player".to_string()),
+                TextFont {
+                    font_size: 30.0,
+                    ..default()
+                },
+                TextColor(TEXT_COLOR),
+            ));
+            //TODO [URLのサンプルを参考にデバッグ情報の表示を実装。https://bevy.org/examples/ui-user-interface/text/]
+            //TODO Player name
+            parent.spawn((
+                Text(format!("player name: {}", r_player.name)),
                 TextFont {
                     font_size: 20.0,
                     ..default()
                 },
                 TextColor(TEXT_COLOR),
-                DebugInfoMarker::PlayerPosition,
             ));
+            // Player position
+            parent.spawn((
+                Text("player position: ".to_string()),
+                TextFont {
+                    font_size: 20.0,
+                    ..default()
+                },
+                TextColor(TEXT_COLOR),
+            )).with_children(|parent|{
+                parent.spawn((
+                    TextSpan::default(),
+                    TextFont {
+                        font_size: 20.0,
+                        ..default()
+                    },
+                    TextColor(TEXT_COLOR),
+                    DebugInfoMarker::PlayerPosition,
+                ));
+            });
+            // Player direction
+            parent.spawn((
+                Text("player direction: ".to_string()),
+                TextFont {
+                    font_size: 20.0,
+                    ..default()
+                },
+                TextColor(TEXT_COLOR),
+            )).with_children(|parent|{
+                parent.spawn((
+                    TextSpan::default(),
+                    TextFont {
+                        font_size: 20.0,
+                        ..default()
+                    },
+                    TextColor(TEXT_COLOR),
+                    DebugInfoMarker::PlayerDirection,
+                ));
+            });
+            //TODO Player states HP, MP, etc.
         });
-        // Player direction
-        parent.spawn((
-            Text("player direction: ".to_string()),
-            TextFont {
-                font_size: 20.0,
-                ..default()
-            },
-            TextColor(TEXT_COLOR),
-        )).with_children(|parent|{
+        // Map informations
+        parent.spawn(Node{
+            flex_direction: FlexDirection::Column,
+            ..default()
+        }).with_children(|parent| {
+            // Map name
             parent.spawn((
-                TextSpan::default(),
+                Text("Map: ".to_string()),
                 TextFont {
                     font_size: 20.0,
                     ..default()
                 },
                 TextColor(TEXT_COLOR),
-                DebugInfoMarker::PlayerDirection,
-            ));
+            )).with_children(|parent|{
+                parent.spawn((
+                    TextSpan::default(),
+                    TextFont {
+                        font_size: 20.0,
+                        ..default()
+                    },
+                    TextColor(TEXT_COLOR),
+                    DebugInfoMarker::MapName,
+                ));
+            });
         });
     });
 }
 
-pub fn update_debug_info_player_position(
-    player: Res<Player>,
+pub fn update_debug_info(
+    active_datas: Res<ActiveDatas>,
+    r_player: Res<Player>,
     mut query: Query<(&mut TextSpan, & DebugInfoMarker)>,
 ) {
-    if let Some((mut text_span, _)) = query.iter_mut().find(|(_, marker)| **marker == DebugInfoMarker::PlayerPosition) {
-        **text_span = format!("x: {}, y: {}", player.position.x, player.position.y);
-    }
-}
-
-pub fn update_debug_info_player_direction(
-    player: Res<Player>,
-    mut query: Query<(&mut TextSpan, & DebugInfoMarker)>,
-) {
-    if let Some((mut text_span, _)) = query.iter_mut().find(|(_, marker)| **marker == DebugInfoMarker::PlayerDirection) {
-        **text_span = format!("direction: {:?}", player.direction);
+    for (mut text_span, debug_info) in query.iter_mut() {
+        match *debug_info {
+            DebugInfoMarker::PlayerPosition => **text_span = format!("x: {}, y: {}", r_player.position.x, r_player.position.y),
+            DebugInfoMarker::PlayerDirection => **text_span = format!("direction: {:?}", r_player.direction),
+            DebugInfoMarker::MapName => **text_span = format!("map name: {}", active_datas.active_map_name), // Assuming the map name is stored in Player.name
+            _ => {}
+        }
     }
 }
