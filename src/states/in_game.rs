@@ -4,9 +4,7 @@ pub mod player_states;
 use bevy::prelude::*;
 
 use crate::{
-    GameState, core::systems::despawn_screen,
-    game::{ui, world::player},
-    states::in_game::player_states::{ActionStates, JumpState, MoveStates},
+    core::systems::despawn_screen, debug::{self, DebugModeState}, game::{ui, world::player}, states::in_game::player_states::{ActionStates, JumpState, MoveStates}, GameState
 };
 
 #[derive(Component)]
@@ -42,7 +40,8 @@ pub fn in_game_plugin(app: &mut App) {
         .init_state::<ActionStates>()
         .init_state::<MoveStates>()
         .init_state::<JumpState>()
-        .add_plugins((loading::loading_plugin, ui::in_game_ui_plugin))
+        .init_state::<DebugModeState>()
+        .add_plugins((loading::loading_plugin, ui::in_game_ui_plugin, debug::debug_plungin))
         .add_systems(OnEnter(GameState::InGame), start_game)
         .add_systems(
             OnExit(GameState::InGame),

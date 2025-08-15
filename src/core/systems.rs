@@ -7,7 +7,6 @@ pub fn despawn_screen<T: Component>(to_despawn: Query<Entity, With<T>>, mut comm
     }
 }
 
-
 pub fn state_change_detect<T: States + Copy>(
     game_states: Res<State<T>>,
     mut last_state: Local<Option<T>>,
