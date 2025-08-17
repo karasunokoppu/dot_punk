@@ -1,9 +1,10 @@
 pub mod in_game_menu;
 pub mod pause_menu;
+pub mod setting_ui;
 
 use bevy::prelude::*;
 
-use crate::{GameState, core::systems::despawn_screen, core::ui, states::in_game::PauseState};
+use crate::{core::{systems::despawn_screen, ui}, game::ui::{pause_menu::PauseButtonAction, setting_ui::{pause_setting_menu_setup, setting_menu_action, OnPauseSettingsMenuScreen}}, states::in_game::PauseState, GameState};
 
 pub fn in_game_ui_plugin(app: &mut App) {
     app.add_systems(
@@ -23,5 +24,19 @@ pub fn in_game_ui_plugin(app: &mut App) {
     .add_systems(
         OnExit(PauseState::PauseMenu),
         despawn_screen::<pause_menu::OnPauseMenuScreen>,
+    )
+    .add_systems(
+        OnEnter(PauseButtonAction::Settings),
+        pause_setting_menu_setup,
+    )
+    .add_systems(
+        Update,
+        (
+            setting_menu_action
+        ).run_if(in_state(PauseButtonAction::Settings))
+    )
+    .add_systems(
+        OnExit(PauseButtonAction::Settings),
+        despawn_screen::<OnPauseSettingsMenuScreen>
     );
 }

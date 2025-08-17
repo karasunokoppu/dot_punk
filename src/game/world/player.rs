@@ -24,6 +24,12 @@ pub fn player_plugin(app: &mut App) {
         )
         .add_systems(
             Update,
-            (controll::dash_mode).run_if(in_state(ActionStates::Move)),
+            (
+                controll::dash_mode,
+            ).run_if(in_state(ActionStates::Move)),
+        )
+        .add_systems(
+            Update,
+            controll::update_camera_pos.run_if(not(in_state(ActionStates::Disable)))
         );
 }

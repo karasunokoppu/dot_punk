@@ -11,7 +11,7 @@ use crate::{
         },
     },
     game::world::{map::components::PlayerMarker, player::components::Direction},
-    states::in_game::player_states::{ActionStates, MoveStates},
+    states::in_game::player_states::{ActionStates, MoveStates}, MainCamera,
 };
 
 pub fn move_player(
@@ -28,10 +28,10 @@ pub fn move_player(
     //**set player's speed**
     //get key input and set speed
     if keyboard_input.pressed(key_map.move_left) {
-        velocity.x -= 1.0;
+        velocity.x -= 2.0;
     }
     if keyboard_input.pressed(key_map.move_right) {
-        velocity.x += 1.0;
+        velocity.x += 2.0;
     }
     if keyboard_input.pressed(key_map.move_up) {
         velocity.y += 1.0;
@@ -110,5 +110,17 @@ pub fn dash_mode(
         move_state.set(MoveStates::Run);
     } else {
         move_state.set(MoveStates::Wark);
+    }
+}
+
+pub fn update_camera_pos(
+    player_pos: Query<&Transform, (With<PlayerMarker>, Without<MainCamera>)>,
+    mut camera: Query<&mut Transform, (With<MainCamera>, Without<PlayerMarker>)>
+){
+    if let Ok(player_pos) = player_pos.single() {
+        if let Ok(mut camera_transform) = camera.single_mut() {
+            camera_transform.translation.x = player_pos.translation.x;
+            camera_transform.translation.y = player_pos.translation.y;
+        }
     }
 }

@@ -63,15 +63,21 @@ impl Default for Map {
                     end_node: Position { x: 93.0, y: -256.0 },
                 },
             ],
-            teleport_nodes: vec![TeleportNode {
-                id: 0,
+            teleport_nodes: vec![
+            // テレポートノードの例
+            TeleportNode {
+                id: 0,// 全マップ共通のユニークなID
                 node_position: Position {
-                    x: 250.0,
+                    x: 300.0,
                     y: -200.0,
                 },
-                target_map: 1, //本来はテレポート先のマップID
-                teleport_position: Position { x: 0.0, y: 0.0 }, // テレポート先の座標
-            }],
+                target_map: 0, // テレポート先のマップID
+                teleport_position: Position {
+                    x: -50.0,
+                    y: -100.0,
+                }, // テレポート先の座標
+            },
+        ],
         }
     }
 }

@@ -46,6 +46,13 @@ pub enum GameState {
     InGame,
 }
 
+#[derive(Component)]
+pub struct MainCamera;
+
 fn setup_camera(mut commands: Commands) {
-    commands.spawn(Camera2d);
+    commands.spawn((
+        Camera2d,
+        MainCamera,
+        Transform::from_xyz(0.0, 0.0, 0.0)
+    ));
 }

@@ -124,6 +124,14 @@ pub fn spawn_debug_information(
             //TODO Player states HP, MP, etc.
         });
         // Map informations
+        parent.spawn((
+            Text("Maps".to_string()),
+            TextFont {
+                font_size: 30.0,
+                ..default()
+            },
+            TextColor(TEXT_COLOR),
+        ));
         parent.spawn(Node{
             flex_direction: FlexDirection::Column,
             ..default()

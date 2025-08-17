@@ -10,14 +10,17 @@ use crate::{
 #[derive(Component)]
 pub struct OnPauseMenuScreen;
 
-#[derive(Component)]
+#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States, Component)]
 pub enum PauseButtonAction {
     Save,
     Load,
     Settings,
     MainMenu,
     Quit,
+    #[default]
+    Disabled,
 }
+
 
 pub fn toggle_pause_menu(
     mut commands: Commands,
@@ -192,28 +195,39 @@ pub fn pause_menu_action(
     mut next_pause_menu_state: ResMut<NextState<PauseState>>,
     mut next_in_game_state: ResMut<NextState<InGameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
+    mut next_in_pause_state: ResMut<NextState<PauseButtonAction>>
     //Main Menu
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 PauseButtonAction::Save => {
+                    next_in_game_state.set(InGameState::Playing);
+                    next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Save);
                     //1. save the datas
                     //2. change the state
                     println!(">! Save action triggered");
                 }
                 PauseButtonAction::Load => {
+                    next_in_game_state.set(InGameState::Playing);
+                    next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Load);
                     //1. load the datas
                     //2. change the state
                     println!(">! Load action triggered");
                 }
                 PauseButtonAction::Settings => {
+                    next_in_game_state.set(InGameState::Playing);
+                    next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Settings);
                     //1. change the state
                     println!(">! Settings action triggered");
                 }
                 PauseButtonAction::MainMenu => {
                     next_in_game_state.set(InGameState::Disabled);
                     next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Disabled);
                     next_game_state.set(GameState::MainMenu);
                     println!(">! Main Menu action triggered");
                 }
@@ -221,6 +235,7 @@ pub fn pause_menu_action(
                     println!(">! Quit action triggered");
                     app_exit_events.write(AppExit::Success);
                 }
+                _ => {}
             }
         }
     }
