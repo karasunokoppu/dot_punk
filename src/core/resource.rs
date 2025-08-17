@@ -1,6 +1,6 @@
 use crate::{
     core::components::{Position, SpriteData},
-    game::world::player::{components::Direction, states_components::EntityStates},
+    game::world::{map::components::Map, player::{components::Direction, states_components::EntityStates}, NPCs::talk::TalkDialog},
 };
 use bevy::prelude::*;
 
@@ -20,6 +20,16 @@ impl Default for ActiveDatas {
             teleport_position:Position {x: -50.0, y: -100.0}
         }
     }
+}
+
+#[derive(Resource)]
+pub struct Maps {
+    pub map_list: Vec<Map>,
+}
+
+#[derive(Resource)]
+pub struct TalkDialogs {
+    pub dialog_list: Vec<TalkDialog>,
 }
 
 #[derive(Resource)]

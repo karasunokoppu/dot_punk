@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::components::{Position, SpriteData},
-    game::world::map::components::{Map, Maps, TeleportNode, WallColliderNode},
+    core::{components::{Position, SpriteData}, resource::Maps},
+    game::world::{map::components::{Map, TeleportNode, WallColliderNode}, NPCs::components::NPC},
 };
 
 //How to register stage to the game
@@ -57,6 +57,20 @@ pub fn register_stage001(mut r_maps: ResMut<Maps>) {
                 }, // テレポート先の座標
             },
         ],
+        npc: vec![
+            NPC {
+                id: 3,
+                name: "Citizen 01".to_string(),
+                position: Position { x: 200.0, y: -45.0 },
+                ..default()
+            },
+            NPC {
+                id: 4,
+                name: "Citizen 02".to_string(),
+                position: Position { x: -153.0, y: -109.0 },
+                ..default()
+            },
+        ]
     };
     // マップデータをロード
     r_maps.map_list.push(map001);

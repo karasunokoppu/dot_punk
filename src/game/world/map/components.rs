@@ -1,17 +1,12 @@
 use bevy::prelude::*;
 
-use crate::core::components::{Position, SpriteData};
+use crate::{core::components::{Position, SpriteData}, game::world::NPCs::components::NPC};
 
 #[derive(Component)]
 pub struct PlayerMarker;
 
 #[derive(Component)]
 pub struct TeleportNodeMarker;
-
-#[derive(Resource)]
-pub struct Maps {
-    pub map_list: Vec<Map>,
-}
 
 #[derive(Component)]
 pub struct Map {
@@ -20,6 +15,7 @@ pub struct Map {
     pub sprites: Vec<SpriteData>,
     pub wall_colliders: Vec<WallColliderNode>,
     pub teleport_nodes: Vec<TeleportNode>,
+    pub npc: Vec<NPC>,
 }
 
 impl Default for Map {
@@ -64,20 +60,34 @@ impl Default for Map {
                 },
             ],
             teleport_nodes: vec![
-            // テレポートノードの例
-            TeleportNode {
-                id: 0,// 全マップ共通のユニークなID
-                node_position: Position {
-                    x: 300.0,
-                    y: -200.0,
+                // テレポートノードの例
+                TeleportNode {
+                    id: 0,// 全マップ共通のユニークなID
+                    node_position: Position {
+                        x: 300.0,
+                        y: -200.0,
+                    },
+                    target_map: 1, // テレポート先のマップID
+                    teleport_position: Position {
+                        x: -50.0,
+                        y: -100.0,
+                    }, // テレポート先の座標
                 },
-                target_map: 0, // テレポート先のマップID
-                teleport_position: Position {
-                    x: -50.0,
-                    y: -100.0,
-                }, // テレポート先の座標
-            },
-        ],
+            ],
+            npc: vec![
+                NPC {
+                    id: 1,
+                    name: "Citizen 01".to_string(),
+                    position: Position { x: -153.0, y: -109.0 },
+                    ..default()
+                },
+                NPC {
+                    id: 2,
+                    name: "Citizen 02".to_string(),
+                    position: Position { x: 20.0, y: -114.0 },
+                    ..default()
+                },
+            ]
         }
     }
 }

@@ -2,9 +2,8 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::systems::despawn_screen,
-    core::{resource::ActiveDatas, ui::style::TEXT_COLOR},
-    game::world::map::components::{Maps, PlayerMarker, TeleportNode, TeleportNodeMarker},
+    core::{resource::{ActiveDatas, Maps}, systems::despawn_screen, ui::style::TEXT_COLOR},
+    game::world::{map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, NPCs::components::NPCMarker},
     states::in_game::{InGameEntityMarker, InGameState},
 };
 
@@ -138,6 +137,24 @@ fn set_game_stage(
                 Mesh2d(meshes.add(Circle::new(20.0))),
                 MeshMaterial2d(materials.add(Color::srgb(0.0, 0.5, 1.0))),
             ));
+        }
+        //spawn NPCs
+        if map.id == r_active_datas.teleport_map {
+            for npc in &map.npc {
+                commands.spawn((
+                    InGameEntityMarker,
+                    NPCMarker,
+                    RigidBody::Static,
+                    Collider::circle(20.0),
+                    LockedAxes::ROTATION_LOCKED,
+                    CollidingEntities::default(),
+                    Transform::from_xyz(npc.position.x, npc.position.y, 10.0),
+                    GlobalZIndex(10),
+                    //for debugging
+                    Mesh2d(meshes.add(Circle::new(20.0))),
+                    MeshMaterial2d(materials.add(Color::srgb(0.5, 1.0, 0.5))),
+                ));
+            }
         }
     }
     // Change the game state to InGame
