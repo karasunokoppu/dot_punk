@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{core::{components::{Position, SpriteData}, resource::TalkDialogs}, game::world::{player::{components::Direction, states_components::EntityStates}, NPCs::talk::TalkDialog}};
+use crate::{core::{components::{Position, SpriteData}}, game::world::{player::{components::Direction, states_components::EntityStates}, NPCs::generic}};
 
 #[derive(Component)]
 pub struct NPCMarker;
@@ -9,7 +9,7 @@ pub struct NPCMarker;
 pub enum NPCType {
     Merchant,
     QuestGiver,
-    Generic,
+    Generic(generic::talk::TalkDialog),//TODO [話しかけるシステムを実装する]
 }
 
 #[derive(Component)]
@@ -22,15 +22,13 @@ pub struct NPC {
     pub sprite: SpriteData,
     pub position: Position,
     pub direction: Direction,
-    // 会話
-    pub talk_dialog_id: u32, //TODO [クエストの進行状況に応じてTalkDialogのIDを変更する]
 }
 impl Default for NPC {
     fn default() -> Self {
         NPC {
             id: 0,
             name: "Default NPC".to_string(),
-            npm_type: NPCType::Generic,
+            npm_type: NPCType::Generic(generic::talk::TalkDialog::default()),
             sprite: SpriteData {
                 z_index: 10, //10..19
                 image: "default_npc_image.png".to_string(),
@@ -38,7 +36,6 @@ impl Default for NPC {
             position: Position::default(),
             direction: Direction::default(),
             states: EntityStates::default(),
-            talk_dialog_id: 0,
         }
     }
 }

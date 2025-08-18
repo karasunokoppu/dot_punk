@@ -30,5 +30,3 @@ pub fn detect_teleport_node_colliding(
         }
     }
 }
-
-//TODO [テレポートノードに衝突しテレポートした際に、現在のマップ情報を更新する(て情報を保持するresourceを実装する)]

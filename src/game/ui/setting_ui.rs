@@ -28,7 +28,6 @@ pub enum PauseSettingMenuSideBarAction {
     Interface,
     Back,
 }
-//TODO [設定UIを作成。ゲーム内設定も実装]
 
 pub fn pause_setting_menu_setup(mut commands: Commands) {
     // Common style for Side Bar buttons on the screen

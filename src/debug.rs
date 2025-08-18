@@ -73,8 +73,6 @@ pub fn spawn_debug_information(
                 },
                 TextColor(TEXT_COLOR),
             ));
-            //TODO [URLのサンプルを参考にデバッグ情報の表示を実装。https://bevy.org/examples/ui-user-interface/text/]
-            //TODO Player name
             parent.spawn((
                 Text(format!("player name: {}", r_player.name)),
                 TextFont {
@@ -121,7 +119,7 @@ pub fn spawn_debug_information(
                     DebugInfoMarker::PlayerDirection,
                 ));
             });
-            //TODO Player states HP, MP, etc.
+            //TODO Player states HP, MP, etcのデバッグ情報を追加
         });
         // Map informations
         parent.spawn((

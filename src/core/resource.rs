@@ -1,6 +1,6 @@
 use crate::{
     core::components::{Position, SpriteData},
-    game::world::{map::components::Map, player::{components::Direction, states_components::EntityStates}, NPCs::talk::TalkDialog},
+    game::world::{map::components::Map, player::{components::Direction, states_components::EntityStates}},
 };
 use bevy::prelude::*;
 
@@ -25,11 +25,6 @@ impl Default for ActiveDatas {
 #[derive(Resource)]
 pub struct Maps {
     pub map_list: Vec<Map>,
-}
-
-#[derive(Resource)]
-pub struct TalkDialogs {
-    pub dialog_list: Vec<TalkDialog>,
 }
 
 #[derive(Resource)]

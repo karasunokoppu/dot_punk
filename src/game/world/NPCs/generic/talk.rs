@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
 // NPCタイプがNPCType::GenericのNPCに話しかけた際の会話
-//TODO [話しかけるシステムを実装する]
 #[derive(Component)]
 pub struct TalkDialog {
     pub id: u32, //会話のユニークID
