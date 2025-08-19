@@ -10,19 +10,14 @@ pub struct TeleportNodeMarker;
 
 #[derive(Component)]
 pub struct Map {
-    pub id: u32,
-    pub name: String,
     pub sprites: Vec<SpriteData>,
     pub wall_colliders: Vec<WallColliderNode>,
     pub teleport_nodes: Vec<TeleportNode>,
-    pub npc: Vec<NPC>,
 }
 
 impl Default for Map {
     fn default() -> Self {
         Map {
-            id: 0,
-            name: String::from("Default Map"),
             sprites: vec![
                 SpriteData {
                     z_index: 0, //0..9
@@ -67,27 +62,13 @@ impl Default for Map {
                         x: 300.0,
                         y: -200.0,
                     },
-                    target_map: 1, // テレポート先のマップID
+                    target_stage: 1, // テレポート先のマップID
                     teleport_position: Position {
                         x: -50.0,
                         y: -100.0,
                     }, // テレポート先の座標
                 },
             ],
-            npc: vec![
-                NPC {
-                    id: 1,
-                    name: "Citizen 01".to_string(),
-                    position: Position { x: -153.0, y: -109.0 },
-                    ..default()
-                },
-                NPC {
-                    id: 2,
-                    name: "Citizen 02".to_string(),
-                    position: Position { x: 20.0, y: -114.0 },
-                    ..default()
-                },
-            ]
         }
     }
 }
@@ -102,6 +83,6 @@ pub struct WallColliderNode {
 pub struct TeleportNode {
     pub id: u8,
     pub node_position: Position,
-    pub target_map: u32,
+    pub target_stage: u32,
     pub teleport_position: Position,
 }

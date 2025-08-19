@@ -166,7 +166,7 @@ pub fn update_debug_info(
         match *debug_info {
             DebugInfoMarker::PlayerPosition => **text_span = format!("x: {}, y: {}", r_player.position.x, r_player.position.y),
             DebugInfoMarker::PlayerDirection => **text_span = format!("direction: {:?}", r_player.direction),
-            DebugInfoMarker::MapName => **text_span = format!("map name: {}", active_datas.active_map_name), // Assuming the map name is stored in Player.name
+            DebugInfoMarker::MapName => **text_span = format!("map name: {}", active_datas.active_stage_name), // Assuming the map name is stored in Player.name
             _ => {}
         }
     }

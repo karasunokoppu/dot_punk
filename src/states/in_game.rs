@@ -43,7 +43,11 @@ pub fn in_game_plugin(app: &mut App) {
         .init_state::<DebugModeState>()
         .init_state::<PauseButtonAction>()
         .init_state::<PauseSettingMenuState>()
-        .add_plugins((loading::loading_plugin, ui::in_game_ui_plugin, debug::debug_plungin))
+        .add_plugins((
+            loading::loading_plugin,
+            ui::in_game_ui_plugin,
+            debug::debug_plungin
+        ))
         .add_systems(OnEnter(GameState::InGame), start_game)
         .add_systems(
             OnExit(GameState::InGame),
