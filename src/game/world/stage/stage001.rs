@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::{components::{Position, SpriteData}, resource::Maps},
-    game::world::{map::components::{Map, TeleportNode, WallColliderNode}, NPCs::components::NPC},
+    core::{components::{Position, SpriteData}, resource::Stages},
+    game::world::{map::components::{Map, TeleportNode, WallColliderNode}, stage::component::Stage, NPCs::components::NPC},
 };
 
 //How to register stage to the game
@@ -10,10 +10,8 @@ use crate::{
 //2. Push the Map in the Maps resource
 //3. Register the stage in the map_plugin function
 
-pub fn register_stage001(mut r_maps: ResMut<Maps>) {
+pub fn register_stage001(mut r_stages: ResMut<Stages>) {
     let map001: Map = Map {
-        id: 1,
-        name: "Map001".to_string(),
         sprites: vec![
             // スプライトデータの例
             SpriteData {
@@ -50,28 +48,34 @@ pub fn register_stage001(mut r_maps: ResMut<Maps>) {
                     x: 300.0,
                     y: -200.0,
                 },
-                target_map: 0, // テレポート先のマップID
+                target_stage: 0, // テレポート先のマップID
                 teleport_position: Position {
                     x: -50.0,
                     y: -100.0,
                 }, // テレポート先の座標
             },
         ],
-        npc: vec![
-            NPC {
-                id: 3,
-                name: "Citizen 01".to_string(),
-                position: Position { x: 200.0, y: -45.0 },
-                ..default()
-            },
-            NPC {
-                id: 4,
-                name: "Citizen 02".to_string(),
-                position: Position { x: -153.0, y: -109.0 },
-                ..default()
-            },
-        ]
+    };
+    let npcs001: Vec<NPC> = vec![
+        NPC {
+            id: 3,
+            name: "Citizen 01".to_string(),
+            position: Position { x: 200.0, y: -45.0 },
+            ..default()
+        },
+        NPC {
+            id: 4,
+            name: "Citizen 02".to_string(),
+            position: Position { x: -153.0, y: -109.0 },
+            ..default()
+        },
+    ];
+    let stage001 = Stage {
+        id: 1,
+        name: "Map001".to_string(),
+        map: map001,
+        npcs: npcs001,
     };
     // マップデータをロード
-    r_maps.map_list.push(map001);
+    r_stages.stage_list.push(stage001);
 }

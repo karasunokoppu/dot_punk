@@ -181,8 +181,8 @@ pub fn main_menu_action(
                     menu_state.set(MenuState::Disabled);
                 }
                 MenuButtonAction::ContinuePlay => {
-                    r_active_datas.active_map_id = 1;
-                    r_active_datas.teleport_map = 1;
+                    r_active_datas.active_stage_id = 1;
+                    r_active_datas.teleport_stage = 1;
                     r_active_datas.teleport_position = Position::default();
                     println!("Push ContinuePlay");
                     game_state.set(GameState::InGame);

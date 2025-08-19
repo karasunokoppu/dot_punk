@@ -2,7 +2,7 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::{ActiveDatas, Maps}, systems::despawn_screen, ui::style::TEXT_COLOR},
+    core::{resource::{ActiveDatas, Stages}, systems::despawn_screen, ui::style::TEXT_COLOR},
     game::world::{map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, NPCs::components::NPCMarker},
     states::in_game::{InGameEntityMarker, InGameState},
 };
@@ -61,26 +61,26 @@ fn loading_setup(mut commands: Commands) {
 fn set_game_stage(
     mut commands: Commands,
     mut r_active_datas: ResMut<ActiveDatas>,
-    maps: Res<Maps>,
+    stages: Res<Stages>,
     assets_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<InGameState>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    for map in &maps.map_list {
-        //spawn map sprites
-        if map.id == r_active_datas.teleport_map {
-            // Spawn sprites (the map or any other entities needed for the game stage)
-            for sprite in &map.sprites {
-                let map_image = assets_server.load(&sprite.image);
+    for stage in &stages.stage_list {
+        //spawn stage sprites
+        if stage.id == r_active_datas.teleport_stage {
+            // Spawn sprites (the stages or any other entities needed for the game stage)
+            for sprite in &stage.map.sprites {
+                let stages_image = assets_server.load(&sprite.image);
                 commands.spawn((
                     InGameEntityMarker,
-                    Sprite::from_image(map_image),
+                    Sprite::from_image(stages_image),
                     Transform::from_xyz(0.0, 0.0, sprite.z_index as f32),
                     GlobalZIndex(sprite.z_index),
                 ));
             }
-            for wall_collider in &map.wall_colliders {
+            for wall_collider in &stage.map.wall_colliders {
                 commands.spawn((
                     InGameEntityMarker,
                     RigidBody::Static,
@@ -91,7 +91,7 @@ fn set_game_stage(
                 ));
             }
             // Spawn teleport nodes
-            for teleport_node in &map.teleport_nodes {
+            for teleport_node in &stage.map.teleport_nodes {
                 commands.spawn((
                     InGameEntityMarker,
                     Transform::from_xyz(
@@ -106,7 +106,7 @@ fn set_game_stage(
                     TeleportNode {
                         id: teleport_node.id,
                         node_position: teleport_node.node_position,
-                        target_map: teleport_node.target_map,
+                        target_stage: teleport_node.target_stage,
                         teleport_position: teleport_node.teleport_position,
                     },
                     GlobalZIndex(10),
@@ -115,11 +115,9 @@ fn set_game_stage(
                     MeshMaterial2d(materials.add(Color::srgb(1.0, 0.5, 0.0))),
                 ));
             }
+            r_active_datas.active_stage_name = stage.name.clone();
 
-            r_active_datas.active_map_name = map.name.clone();
-        }
-        //spawn player
-        if map.id == r_active_datas.teleport_map {
+            //spawn player
             commands.spawn((
                 InGameEntityMarker,
                 PlayerMarker,
@@ -137,10 +135,9 @@ fn set_game_stage(
                 Mesh2d(meshes.add(Circle::new(20.0))),
                 MeshMaterial2d(materials.add(Color::srgb(0.0, 0.5, 1.0))),
             ));
-        }
-        //spawn NPCs
-        if map.id == r_active_datas.teleport_map {
-            for npc in &map.npc {
+
+            //spawn NPCs
+            for npc in &stage.npcs {
                 commands.spawn((
                     InGameEntityMarker,
                     NPCMarker,

@@ -1,30 +1,37 @@
 use crate::{
     core::components::{Position, SpriteData},
-    game::world::{map::components::Map, player::{components::Direction, states_components::EntityStates}},
+    game::world::{map::components::Map, player::{components::Direction, states_components::EntityStates}, stage::component::Stage},
 };
 use bevy::prelude::*;
 
 #[derive(Resource)]
 pub struct ActiveDatas {
-    pub active_map_id: u32,
-    pub active_map_name: String, //TODO [テレポート時に時に設定]
-    pub teleport_map: u32,           // Next teleport map ID
+    pub active_stage_id: u32,
+    pub active_stage_name: String, //TODO [テレポート時に時に設定]
+    pub teleport_stage: u32,           // Next teleport map ID
     pub teleport_position: Position, // Next teleport node ID
 }
 impl Default for ActiveDatas {
     fn default() -> Self {
         ActiveDatas {
-            active_map_id: 0,
-            active_map_name: "Default Map".to_string(),
-            teleport_map: 0,
+            active_stage_id: 0,
+            active_stage_name: "Default Map".to_string(),
+            teleport_stage: 0,
             teleport_position:Position {x: -50.0, y: -100.0}
         }
     }
 }
 
 #[derive(Resource)]
-pub struct Maps {
-    pub map_list: Vec<Map>,
+pub struct Stages {
+    pub stage_list: Vec<Stage>,
+}
+impl Default for Stages {
+    fn default() -> Self {
+        Stages {
+            stage_list: vec![Stage::default()],
+        }
+    }
 }
 
 #[derive(Resource)]
