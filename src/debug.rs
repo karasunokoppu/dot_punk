@@ -36,6 +36,7 @@ pub enum DebugModeState {
 pub enum DebugInfoMarker {
     PlayerPosition,
     PlayerDirection,
+    ClosestNPC,
     PlayerStatesHP,
     PlayerStatesMP,
     MapName,
@@ -138,6 +139,27 @@ pub fn spawn_debug_information(mut commands: Commands, r_player: Res<Player>) {
                                 DebugInfoMarker::PlayerDirection,
                             ));
                         });
+                    // closest NPC
+                    parent
+                        .spawn((
+                            Text("closest npc id: ".to_string()),
+                            TextFont {
+                                font_size: 20.0,
+                                ..default()
+                            },
+                            TextColor(TEXT_COLOR),
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextSpan::default(),
+                                TextFont {
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                                TextColor(TEXT_COLOR),
+                                DebugInfoMarker::ClosestNPC,
+                            ));
+                        });
                     //TODO Player states HP, MP, etcのデバッグ情報を追加
                 });
             // Map informations
@@ -195,7 +217,10 @@ pub fn update_debug_info(
             }
             DebugInfoMarker::MapName => {
                 **text_span = format!("map name: {}", active_datas.active_stage_name)
-            } // Assuming the map name is stored in Player.name
+            }
+            DebugInfoMarker::ClosestNPC => {
+                **text_span = format!("{}", active_datas.closest_npc)
+            }
             _ => {}
         }
     }

@@ -5,7 +5,7 @@ use bevy::prelude::*;
 
 use crate::{
     core::systems::despawn_screen, debug::{self, DebugModeState}, game::{
-        ui::{self, pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk::text_window_system::{generate_text_window, handle_talk_event, TalkEvent}},
+        ui::{self, pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState},
         world::player,
     }, states::in_game::player_states::{ActionStates, JumpState, MoveStates}, GameState
 };
@@ -46,7 +46,6 @@ pub fn in_game_plugin(app: &mut App) {
         .init_state::<DebugModeState>()
         .init_state::<PauseButtonAction>()
         .init_state::<PauseSettingMenuState>()
-        .add_event::<TalkEvent>()
         .add_plugins((
             loading::loading_plugin,
             ui::in_game_ui_plugin,
@@ -56,9 +55,5 @@ pub fn in_game_plugin(app: &mut App) {
         .add_systems(
             OnExit(GameState::InGame),
             despawn_screen::<InGameEntityMarker>,
-        )
-        .add_observer(generate_text_window)
-        .add_systems(Update, (
-            handle_talk_event,
-        ).run_if(in_state(GameState::InGame)));
+        );
 }

@@ -2,6 +2,7 @@ pub mod animation;
 pub mod components;
 pub mod controll;
 pub mod states_components;
+pub mod senser;
 
 use bevy::prelude::*;
 
@@ -19,6 +20,7 @@ pub fn player_plugin(app: &mut App) {
                 //テレポートノードに接した際などに衝突を検出するため
                 detect_teleport_node_colliding,
                 controll::update_player_pos_resource,
+                senser::detect_nearby_npc,
             )
                 .run_if(in_state(InGameState::Playing)),
         )

@@ -14,6 +14,7 @@ pub struct ActiveDatas {
     pub active_stage_name: String,
     pub teleport_stage: u32,         // Next teleport map ID
     pub teleport_position: Position, // Next teleport node ID
+    pub closest_npc: u32,        // Closest NPC ID
 }
 impl Default for ActiveDatas {
     fn default() -> Self {
@@ -25,6 +26,7 @@ impl Default for ActiveDatas {
                 x: -50.0,
                 y: -100.0,
             },
+            closest_npc: 0,
         }
     }
 }
