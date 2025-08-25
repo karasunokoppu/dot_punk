@@ -21,7 +21,6 @@ pub enum PauseButtonAction {
     Disabled,
 }
 
-
 pub fn toggle_pause_menu(
     mut commands: Commands,
     query: Query<Entity, With<OnPauseMenuScreen>>,
@@ -195,8 +194,7 @@ pub fn pause_menu_action(
     mut next_pause_menu_state: ResMut<NextState<PauseState>>,
     mut next_in_game_state: ResMut<NextState<InGameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
-    mut next_in_pause_state: ResMut<NextState<PauseButtonAction>>
-    //Main Menu
+    mut next_in_pause_state: ResMut<NextState<PauseButtonAction>>, //Main Menu
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {

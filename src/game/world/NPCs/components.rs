@@ -1,15 +1,22 @@
 use bevy::prelude::*;
 
-use crate::{core::{components::{Position, SpriteData}}, game::world::{player::{components::Direction, states_components::EntityStates}, NPCs::generic}};
+use crate::{
+    core::components::{Position, SpriteData},
+    game::{ui::talk::components::TalkDialog, world::{
+        player::{components::Direction, states_components::EntityStates}, NPCs::generic
+    }},
+};
 
 #[derive(Component)]
-pub struct NPCMarker;
+pub struct NPCMarker{
+    pub id: u32,
+}
 
 #[derive(Component)]
 pub enum NPCType {
     Merchant,
     QuestGiver,
-    Generic(generic::talk::TalkDialog),//TODO [話しかけるシステムを実装する]
+    Generic(TalkDialog), //TODO [話しかけるシステムを実装する]
 }
 
 #[derive(Component)]
@@ -28,7 +35,7 @@ impl Default for NPC {
         NPC {
             id: 0,
             name: "Default NPC".to_string(),
-            npm_type: NPCType::Generic(generic::talk::TalkDialog::default()),
+            npm_type: NPCType::Generic(TalkDialog::default()),
             sprite: SpriteData {
                 z_index: 10, //10..19
                 image: "default_npc_image.png".to_string(),

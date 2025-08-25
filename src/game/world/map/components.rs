@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{core::components::{Position, SpriteData}, game::world::NPCs::components::NPC};
+use crate::{
+    core::components::{Position, SpriteData},
+    game::world::NPCs::components::NPC,
+};
 
 #[derive(Component)]
 pub struct PlayerMarker;
@@ -57,7 +60,7 @@ impl Default for Map {
             teleport_nodes: vec![
                 // テレポートノードの例
                 TeleportNode {
-                    id: 0,// 全マップ共通のユニークなID
+                    id: 0, // 全マップ共通のユニークなID
                     node_position: Position {
                         x: 300.0,
                         y: -200.0,

@@ -2,8 +2,15 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::{ActiveDatas, Stages}, systems::despawn_screen, ui::style::TEXT_COLOR},
-    game::world::{map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, NPCs::components::NPCMarker},
+    core::{
+        resource::{ActiveDatas, Stages},
+        systems::despawn_screen,
+        ui::style::TEXT_COLOR,
+    },
+    game::world::{
+        NPCs::components::NPCMarker,
+        map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker},
+    },
     states::in_game::{InGameEntityMarker, InGameState},
 };
 
@@ -140,7 +147,7 @@ fn set_game_stage(
             for npc in &stage.npcs {
                 commands.spawn((
                     InGameEntityMarker,
-                    NPCMarker,
+                    NPCMarker{id: npc.id},
                     RigidBody::Static,
                     Collider::circle(20.0),
                     LockedAxes::ROTATION_LOCKED,

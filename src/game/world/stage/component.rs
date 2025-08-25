@@ -1,9 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{core::components::Position, game::world::{map::components::Map, NPCs::components::NPC}};
+use crate::{
+    core::components::Position,
+    game::world::{NPCs::components::NPC, map::components::Map},
+};
 
 #[derive(Component)]
-pub struct Stage{
+pub struct Stage {
     pub id: u32,
     pub name: String,
     pub map: Map,
@@ -20,7 +23,10 @@ impl Default for Stage {
                 NPC {
                     id: 1,
                     name: "Citizen 01".to_string(),
-                    position: Position { x: -153.0, y: -109.0 },
+                    position: Position {
+                        x: -153.0,
+                        y: -109.0,
+                    },
                     ..default()
                 },
                 NPC {
@@ -29,7 +35,7 @@ impl Default for Stage {
                     position: Position { x: 20.0, y: -114.0 },
                     ..default()
                 },
-            ]
+            ],
         }
     }
 }

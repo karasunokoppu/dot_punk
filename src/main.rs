@@ -50,9 +50,5 @@ pub enum GameState {
 pub struct MainCamera;
 
 fn setup_camera(mut commands: Commands) {
-    commands.spawn((
-        Camera2d,
-        MainCamera,
-        Transform::from_xyz(0.0, 0.0, 0.0)
-    ));
+    commands.spawn((Camera2d, MainCamera, Transform::from_xyz(0.0, 0.0, 0.0)));
 }

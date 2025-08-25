@@ -2,6 +2,7 @@ use avian2d::prelude::*;
 use bevy::prelude::*;
 
 use crate::{
+    MainCamera,
     core::{
         components::Position,
         resource::Player,
@@ -11,7 +12,7 @@ use crate::{
         },
     },
     game::world::{map::components::PlayerMarker, player::components::Direction},
-    states::in_game::player_states::{ActionStates, MoveStates}, MainCamera,
+    states::in_game::player_states::{ActionStates, MoveStates},
 };
 
 pub fn move_player(
@@ -115,8 +116,8 @@ pub fn dash_mode(
 
 pub fn update_camera_pos(
     player_pos: Query<&Transform, (With<PlayerMarker>, Without<MainCamera>)>,
-    mut camera: Query<&mut Transform, (With<MainCamera>, Without<PlayerMarker>)>
-){
+    mut camera: Query<&mut Transform, (With<MainCamera>, Without<PlayerMarker>)>,
+) {
     if let Ok(player_pos) = player_pos.single() {
         if let Ok(mut camera_transform) = camera.single_mut() {
             camera_transform.translation.x = player_pos.translation.x;

@@ -1,16 +1,13 @@
 use crate::core::resource::ActiveDatas;
+use crate::game::world::player;
 use crate::game::world::stage;
-use crate::game::world::{player};
 use crate::{GameState, core::systems::despawn_screen};
 use bevy::prelude::*;
 
 pub fn splash_plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Splash), splash_setup)
         .insert_resource(ActiveDatas::default())
-        .add_plugins((
-            stage::stage_plugin,
-            player::player_plugin
-        ))
+        .add_plugins((stage::stage_plugin, player::player_plugin))
         .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
         .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>);
 }

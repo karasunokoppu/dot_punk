@@ -1,8 +1,15 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::{components::{Position, SpriteData}, resource::Stages},
-    game::world::{map::components::{Map, TeleportNode, WallColliderNode}, stage::component::Stage, NPCs::components::NPC},
+    core::{
+        components::{Position, SpriteData},
+        resource::Stages,
+    },
+    game::world::{
+        NPCs::components::NPC,
+        map::components::{Map, TeleportNode, WallColliderNode},
+        stage::component::Stage,
+    },
 };
 
 //How to register stage to the game
@@ -66,7 +73,10 @@ pub fn register_stage001(mut r_stages: ResMut<Stages>) {
         NPC {
             id: 4,
             name: "Citizen 02".to_string(),
-            position: Position { x: -153.0, y: -109.0 },
+            position: Position {
+                x: -153.0,
+                y: -109.0,
+            },
             ..default()
         },
     ];
