@@ -1,12 +1,11 @@
 use bevy::prelude::*;
 
 use crate::{
-    GameState,
     core::{
         resource::{ActiveDatas, Player},
         systems::despawn_screen,
         ui::style::TEXT_COLOR,
-    },
+    }, game::world::player::activate_entity::ActivateEntities, GameState
 };
 
 pub fn debug_plungin(app: &mut App) {
@@ -36,7 +35,7 @@ pub enum DebugModeState {
 pub enum DebugInfoMarker {
     PlayerPosition,
     PlayerDirection,
-    ClosestNPC,
+    ClosestActivateEntity,
     PlayerStatesHP,
     PlayerStatesMP,
     MapName,
@@ -142,7 +141,7 @@ pub fn spawn_debug_information(mut commands: Commands, r_player: Res<Player>) {
                     // closest NPC
                     parent
                         .spawn((
-                            Text("closest npc id: ".to_string()),
+                            Text("closest activate entity: ".to_string()),
                             TextFont {
                                 font_size: 20.0,
                                 ..default()
@@ -157,7 +156,7 @@ pub fn spawn_debug_information(mut commands: Commands, r_player: Res<Player>) {
                                     ..default()
                                 },
                                 TextColor(TEXT_COLOR),
-                                DebugInfoMarker::ClosestNPC,
+                                DebugInfoMarker::ClosestActivateEntity,
                             ));
                         });
                     //TODO Player states HP, MP, etcのデバッグ情報を追加
@@ -218,8 +217,11 @@ pub fn update_debug_info(
             DebugInfoMarker::MapName => {
                 **text_span = format!("map name: {}", active_datas.active_stage_name)
             }
-            DebugInfoMarker::ClosestNPC => {
-                **text_span = format!("{}", active_datas.closest_npc)
+            DebugInfoMarker::ClosestActivateEntity => {
+                **text_span = match &active_datas.closest_activate_entity_type{
+                    ActivateEntities::NPC(npc) => format!("NPC : {}", npc.id),
+                    ActivateEntities::None => "None".to_string(),
+                }
             }
             _ => {}
         }

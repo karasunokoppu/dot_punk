@@ -8,11 +8,6 @@ use crate::{
 };
 
 #[derive(Component)]
-pub struct NPCMarker{
-    pub id: u32,
-}
-
-#[derive(Component)]
 pub enum NPCType {
     Merchant,
     QuestGiver,

@@ -2,12 +2,13 @@ pub mod animation;
 pub mod components;
 pub mod controll;
 pub mod states_components;
-pub mod senser;
+pub mod activate_entity;
 
 use bevy::prelude::*;
 
 use crate::core::resource::Player;
 use crate::game::world::map::teleport_node::detect_teleport_node_colliding;
+use crate::game::world::player::activate_entity::senser::detect_nearby_activate_entity;
 use crate::states::in_game::InGameState;
 use crate::states::in_game::player_states::ActionStates;
 
@@ -20,7 +21,7 @@ pub fn player_plugin(app: &mut App) {
                 //テレポートノードに接した際などに衝突を検出するため
                 detect_teleport_node_colliding,
                 controll::update_player_pos_resource,
-                senser::detect_nearby_npc,
+                detect_nearby_activate_entity,
             )
                 .run_if(in_state(InGameState::Playing)),
         )
