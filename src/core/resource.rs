@@ -1,8 +1,7 @@
 use crate::{
     core::components::{Position, SpriteData},
     game::world::{
-        map::components::Map,
-        player::{activate_entity::{ActivateEntities, NPCMarker}, components::Direction, states_components::EntityStates},
+        player::{interact_entity::{InteractEntities, NPCMarker}, components::Direction, states_components::EntityStates},
         stage::component::Stage,
     },
 };
@@ -14,7 +13,7 @@ pub struct ActiveDatas {
     pub active_stage_name: String,
     pub teleport_stage: u32,         // Next teleport map ID
     pub teleport_position: Position, // Next teleport node ID
-    pub closest_activate_entity_type: ActivateEntities,
+    pub closest_interact_entity_type: InteractEntities,
 }
 impl Default for ActiveDatas {
     fn default() -> Self {
@@ -26,7 +25,7 @@ impl Default for ActiveDatas {
                 x: -50.0,
                 y: -100.0,
             },
-            closest_activate_entity_type: ActivateEntities::NPC(NPCMarker { id: 0})
+            closest_interact_entity_type: InteractEntities::NPC(NPCMarker { id: 0})
         }
     }
 }

@@ -1,10 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    GameState,
-    core::setting::key_map,
-    core::ui::style::{NORMAL_BUTTON, TEXT_COLOR},
-    states::in_game::{InGameState, PauseState},
+    core::{setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, states::in_game::{InGameState, PauseState}, GameState
 };
 
 #[derive(Component)]
@@ -194,13 +191,15 @@ pub fn pause_menu_action(
     mut next_pause_menu_state: ResMut<NextState<PauseState>>,
     mut next_in_game_state: ResMut<NextState<InGameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
+    mut next_debug_modestate: ResMut<NextState<DebugModeState>>,
     mut next_in_pause_state: ResMut<NextState<PauseButtonAction>>, //Main Menu
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 PauseButtonAction::Save => {
-                    next_in_game_state.set(InGameState::Playing);
+                    next_in_game_state.set(InGameState::Playing);//(仮)
+                    next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);
                     next_in_pause_state.set(PauseButtonAction::Save);
                     //1. save the datas
@@ -208,7 +207,8 @@ pub fn pause_menu_action(
                     println!(">! Save action triggered");
                 }
                 PauseButtonAction::Load => {
-                    next_in_game_state.set(InGameState::Playing);
+                    next_in_game_state.set(InGameState::Playing);//(仮)
+                    next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);
                     next_in_pause_state.set(PauseButtonAction::Load);
                     //1. load the datas
@@ -216,13 +216,14 @@ pub fn pause_menu_action(
                     println!(">! Load action triggered");
                 }
                 PauseButtonAction::Settings => {
-                    next_in_game_state.set(InGameState::Playing);
+                    next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);
                     next_in_pause_state.set(PauseButtonAction::Settings);
                     //1. change the state
                     println!(">! Settings action triggered");
                 }
                 PauseButtonAction::MainMenu => {
+                    next_debug_modestate.set(DebugModeState::Off);
                     next_in_game_state.set(InGameState::Disabled);
                     next_pause_menu_state.set(PauseState::Disabled);
                     next_in_pause_state.set(PauseButtonAction::Disabled);

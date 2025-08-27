@@ -5,7 +5,7 @@ use crate::{
         resource::{ActiveDatas, Player},
         systems::despawn_screen,
         ui::style::TEXT_COLOR,
-    }, game::world::player::activate_entity::ActivateEntities, GameState
+    }, game::world::player::interact_entity::InteractEntities, GameState
 };
 
 pub fn debug_plungin(app: &mut App) {
@@ -141,7 +141,7 @@ pub fn spawn_debug_information(mut commands: Commands, r_player: Res<Player>) {
                     // closest NPC
                     parent
                         .spawn((
-                            Text("closest activate entity: ".to_string()),
+                            Text("closest interact entity: ".to_string()),
                             TextFont {
                                 font_size: 20.0,
                                 ..default()
@@ -218,9 +218,9 @@ pub fn update_debug_info(
                 **text_span = format!("map name: {}", active_datas.active_stage_name)
             }
             DebugInfoMarker::ClosestActivateEntity => {
-                **text_span = match &active_datas.closest_activate_entity_type{
-                    ActivateEntities::NPC(npc) => format!("NPC : {}", npc.id),
-                    ActivateEntities::None => "None".to_string(),
+                **text_span = match &active_datas.closest_interact_entity_type{
+                    InteractEntities::NPC(npc) => format!("NPC : {}", npc.id),
+                    InteractEntities::None => "None".to_string(),
                 }
             }
             _ => {}

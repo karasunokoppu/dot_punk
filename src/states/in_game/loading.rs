@@ -8,7 +8,7 @@ use crate::{
         ui::style::TEXT_COLOR,
     },
     game::world::{
-        map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, player::activate_entity::{ActivateEntities, NPCMarker}    },
+        map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, player::interact_entity::{InteractEntities, NPCMarker}    },
     states::in_game::{InGameEntityMarker, InGameState},
 };
 
@@ -145,7 +145,7 @@ fn set_game_stage(
             for npc in &stage.npcs {
                 commands.spawn((
                     InGameEntityMarker,
-                    ActivateEntities::NPC(NPCMarker{id: npc.id}),
+                    InteractEntities::NPC(NPCMarker{id: npc.id}),
                     RigidBody::Static,
                     Collider::circle(20.0),
                     LockedAxes::ROTATION_LOCKED,

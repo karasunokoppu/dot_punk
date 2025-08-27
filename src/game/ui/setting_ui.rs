@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     core::ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
-    game::ui::pause_menu::PauseButtonAction,
+    game::ui::pause_menu::PauseButtonAction, states::in_game::InGameState,
 };
 
 // Tag component used to tag entities added on the settings menu screen
@@ -203,6 +203,7 @@ pub fn setting_menu_action(
     >,
     mut next_pause_buttun_state: ResMut<NextState<PauseButtonAction>>,
     mut pause_setting_menu_state: ResMut<NextState<PauseSettingMenuState>>,
+    mut next_in_game_state: ResMut<NextState<InGameState>>,
     mut target_bundle: Query<(&mut Node, &PauseSettingMenuState)>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
@@ -227,6 +228,7 @@ pub fn setting_menu_action(
                 PauseSettingMenuSideBarAction::Back => {
                     pause_setting_menu_state.set(PauseSettingMenuState::Disabled);
                     next_pause_buttun_state.set(PauseButtonAction::Disabled);
+                    next_in_game_state.set(InGameState::Playing);
                 }
             }
         }
