@@ -29,8 +29,8 @@ pub enum MainSettingMenuSideBarAction {
     Interface,
     Back,
 }
-//TODO [設定UIを作成。ゲーム内設定も実装]
 
+//TODO [設定UIを作成。Display, Sound, KeyBind, Interface]
 pub fn main_setting_menu_setup(mut commands: Commands) {
     // Common style for Side Bar buttons on the screen
     let side_button_node = Node {
@@ -162,7 +162,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         },
                         BackgroundColor(Color::BLACK),
                         MainSettingMenuState::Display,
-                    )); //TODO [Display設定UIを実装]
+                    ));
                     parent.spawn((
                         Node {
                             width: Val::Percent(100.),
@@ -172,7 +172,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         },
                         BackgroundColor(Color::WHITE),
                         MainSettingMenuState::Sound,
-                    )); //TODO [Sound設定UIを実装]
+                    ));
                     parent.spawn((
                         Node {
                             width: Val::Percent(100.),
@@ -182,7 +182,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         },
                         BackgroundColor(Color::srgb(1.0, 0.0, 0.0)),
                         MainSettingMenuState::KeyBind,
-                    )); //TODO [KeyBind設定UIを実装]
+                    ));
                     parent.spawn((
                         Node {
                             width: Val::Percent(100.),
@@ -192,7 +192,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         },
                         BackgroundColor(Color::srgb(0.0, 1.0, 0.0)),
                         MainSettingMenuState::Interface,
-                    )); //TODO [Interface設定UIを実装]
+                    ));
                 });
         });
 }

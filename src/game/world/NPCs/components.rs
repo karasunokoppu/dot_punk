@@ -7,18 +7,18 @@ use crate::{
     }},
 };
 
-#[derive(Component)]
+#[derive(Component, PartialEq, Eq)]
 pub enum NPCType {
     Merchant,
     QuestGiver,
-    Generic(TalkDialog), //TODO [話しかけるシステムを実装する]
+    Generic(TalkDialog),
 }
 
 #[derive(Component)]
 pub struct NPC {
     pub id: u32, // Unique identifier for the NPC
     pub name: String,
-    pub npm_type: NPCType,
+    pub npc_type: NPCType,
     pub states: EntityStates,
     // 物理的な状態
     pub sprite: SpriteData,
@@ -30,7 +30,7 @@ impl Default for NPC {
         NPC {
             id: 0,
             name: "Default NPC".to_string(),
-            npm_type: NPCType::Generic(TalkDialog::default()),
+            npc_type: NPCType::Generic(TalkDialog::default()),
             sprite: SpriteData {
                 z_index: 10, //10..19
                 image: "default_npc_image.png".to_string(),

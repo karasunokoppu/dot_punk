@@ -9,7 +9,6 @@ use bevy::prelude::*;
 use crate::core::resource::Player;
 use crate::game::world::map::teleport_node::detect_teleport_node_colliding;
 use crate::game::world::player::interact_entity::activate_entity_plugin;
-use crate::game::world::player::interact_entity::senser::detect_nearby_activate_entity;
 use crate::states::in_game::InGameState;
 use crate::states::in_game::player_states::ActionStates;
 

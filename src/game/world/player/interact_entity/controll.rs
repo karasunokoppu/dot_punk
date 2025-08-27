@@ -4,7 +4,7 @@ use crate::{core::{resource::ActiveDatas, setting::key_map::KeyMap}, game::world
 
 #[derive(Event)]
 pub struct TalkToNPCEvent{
-    pub npm_id: u32,
+    pub npc_id: u32,
 }
 
 pub fn send_interact_event(
@@ -16,7 +16,7 @@ pub fn send_interact_event(
     if key_input.just_pressed(key_map.interact){
         match &active_datas.closest_interact_entity_type{
             InteractEntities::NPC(npc) => {
-                talk_to_npc_event_writer.write(TalkToNPCEvent{npm_id: npc.id});
+                talk_to_npc_event_writer.write(TalkToNPCEvent{npc_id: npc.id});
             },
             InteractEntities::None => {},
         }

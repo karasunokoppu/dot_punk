@@ -120,6 +120,7 @@ fn set_game_stage(
                     MeshMaterial2d(materials.add(Color::srgb(1.0, 0.5, 0.0))),
                 ));
             }
+            r_active_datas.active_stage_id = stage.id;
             r_active_datas.active_stage_name = stage.name.clone();
 
             //spawn player

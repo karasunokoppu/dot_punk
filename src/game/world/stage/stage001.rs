@@ -5,11 +5,9 @@ use crate::{
         components::{Position, SpriteData},
         resource::Stages,
     },
-    game::world::{
-        NPCs::components::NPC,
-        map::components::{Map, TeleportNode, WallColliderNode},
-        stage::component::Stage,
-    },
+    game::{ui::talk::components::TalkDialog, world::{
+        map::components::{Map, TeleportNode, WallColliderNode}, stage::component::Stage, NPCs::components::{NPCType, NPC}
+    }},
 };
 
 //How to register stage to the game
@@ -67,6 +65,7 @@ pub fn register_stage001(mut r_stages: ResMut<Stages>) {
         NPC {
             id: 3,
             name: "Citizen 01".to_string(),
+            npc_type: NPCType::Merchant,
             position: Position { x: 200.0, y: -45.0 },
             ..default()
         },
