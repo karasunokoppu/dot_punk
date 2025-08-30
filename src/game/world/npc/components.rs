@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::{
     core::components::{Position, SpriteData},
     game::{ui::talk::components::TalkDialog, world::{
-        player::{components::Direction, states_components::EntityStates}, NPCs::generic
+        player::{components::Direction, states_components::EntityStates},
     }},
 };
 

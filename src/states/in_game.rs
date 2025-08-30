@@ -6,7 +6,6 @@ use bevy::prelude::*;
 use crate::{
     core::systems::despawn_screen, debug::{self, DebugModeState}, game::{
         ui::{self, pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk},
-        world::player,
     }, states::in_game::player_states::{ActionStates, JumpState, MoveStates}, GameState
 };
 

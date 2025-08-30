@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     core::components::Position,
-    game::world::{NPCs::components::NPC, map::components::Map},
+    game::world::{npc::components::NPC, map::components::Map},
 };
 
 #[derive(Component)]

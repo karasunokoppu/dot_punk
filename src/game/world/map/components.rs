@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{
-    core::components::{Position, SpriteData},
-    game::world::NPCs::components::NPC,
-};
+use crate::core::components::{Position, SpriteData};
 
 #[derive(Component)]
 pub struct PlayerMarker;

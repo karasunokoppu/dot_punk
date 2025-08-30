@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::{setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, states::in_game::{InGameState, PauseState}, GameState
+    core::{setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, game::ui::talk::TalkTextBoxState, states::in_game::{InGameState, PauseState}, GameState
 };
 
 #[derive(Component)]
@@ -188,6 +188,7 @@ pub fn pause_menu_action(
         (Changed<Interaction>, With<Button>),
     >,
     mut app_exit_events: EventWriter<AppExit>,
+    mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>,
     mut next_pause_menu_state: ResMut<NextState<PauseState>>,
     mut next_in_game_state: ResMut<NextState<InGameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
@@ -223,6 +224,7 @@ pub fn pause_menu_action(
                     println!(">! Settings action triggered");
                 }
                 PauseButtonAction::MainMenu => {
+                    next_talk_textbox_state.set(TalkTextBoxState::Disabled);
                     next_debug_modestate.set(DebugModeState::Off);
                     next_in_game_state.set(InGameState::Disabled);
                     next_pause_menu_state.set(PauseState::Disabled);
