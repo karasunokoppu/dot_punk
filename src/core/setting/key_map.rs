@@ -4,6 +4,7 @@ use bevy::prelude::*;
 #[derive(Resource, Clone, Copy, Debug, Eq, PartialEq)]
 pub struct KeyMap {
     pub interact: KeyCode,
+    pub advance_text: KeyCode,
     pub toggle_pause_menu: KeyCode,
     pub toggle_in_game_menu: KeyCode,
     pub move_up: KeyCode,
@@ -18,6 +19,7 @@ impl Default for KeyMap {
     fn default() -> Self {
         KeyMap {
             interact: KeyCode::KeyF,
+            advance_text: KeyCode::Space,
             // pause menu toggle key( only works when the game is playing )
             toggle_pause_menu: KeyCode::Escape,
             // in-game menu toggle key( only works when the game is playing )
