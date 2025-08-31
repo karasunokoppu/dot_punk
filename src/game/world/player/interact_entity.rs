@@ -22,5 +22,5 @@ pub enum InteractEntities{
 
 #[derive(Component, PartialEq, Eq, Clone)]
 pub struct NPCMarker{
-    pub id: u32,
+    pub id: u32,//NPCのID
 }
