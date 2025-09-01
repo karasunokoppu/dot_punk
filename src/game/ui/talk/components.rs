@@ -24,7 +24,53 @@ impl Default for TalkDialog {
                     element_type: TalkElementType::Text(TalkTextElement {
                         talker: Talkers::NPC(1),
                         text: "Hello, Player! This is talk test 0-1".to_string(),
-                        next_talk_element_id: 2,
+                        next_talk_element_id: 3,
+                    }),
+                },
+                TalkElement {
+                    local_talk_id: 2,
+                    element_type: TalkElementType::Choice(vec![
+                        TalkChoiceElement {
+                            text: "Choice 1".to_string(),
+                            next_talk_element_id: 3,
+                        },
+                        TalkChoiceElement {
+                            text: "Choice 2".to_string(),
+                            next_talk_element_id: 4,
+                        },
+                    ]),
+                },
+                TalkElement {
+                    local_talk_id: 3,
+                    element_type: TalkElementType::End,
+                },
+                TalkElement {
+                    local_talk_id: 4,
+                    element_type: TalkElementType::End,
+                },
+            ],
+        }
+    }
+}
+impl TalkDialog {
+    pub fn new(id: u32) -> Self {
+        TalkDialog {
+            id: id,
+            dialog: vec![
+                TalkElement {
+                    local_talk_id: 0,
+                    element_type: TalkElementType::Text(TalkTextElement {
+                        talker: Talkers::Player,
+                        text: format!("Hello, This is talk test {}-0", id),
+                        next_talk_element_id: 1,
+                    }),
+                },
+                TalkElement {
+                    local_talk_id: 1,
+                    element_type: TalkElementType::Text(TalkTextElement {
+                        talker: Talkers::NPC(id),
+                        text: format!("Hello, Player! This is talk test {}-1", id),
+                        next_talk_element_id: 3,
                     }),
                 },
                 TalkElement {

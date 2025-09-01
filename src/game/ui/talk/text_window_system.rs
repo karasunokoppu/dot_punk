@@ -1,6 +1,6 @@
 use bevy::{color::palettes::css::{LIGHT_GRAY, WHITE}, prelude::*};
 
-use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{Talk_TextBox_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkElement, TalkElementType, Talkers}, TalkTextBoxState}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent}}};
+use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkElement, TalkElementType, Talkers}, TalkTextBoxState}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent}}};
 
 #[derive(Component)]
 pub struct TalkTextBoxMarker;
@@ -26,12 +26,13 @@ pub fn create_text_window(
                     if npc.id == event.npc_id{
                         match &npc.npc_type{
                             NPCType::Generic(talk_dialog) => {
-                                //ここでテキストウィンドウを表示する処理を実装する
-                                println!("talk to npc id: {}", npc.id);
+                                println!("> talk to npc id: {}", npc.id);
                                 //会話データを持っているNPCのIDを保持
                                 r_active_datas.talking_npc = Some(npc.id);
                                 //最初の会話データを取得
                                 let first_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == 0}).unwrap();
+                                next_talk_textbox_state.set(TalkTextBoxState::Enabled);
+                                //テキストボックス表示
                                 commands.spawn((
                                     Node {
                                         width: Val::Percent(80.0),
@@ -76,7 +77,7 @@ pub fn create_text_window(
                                                     font_size: 20.0,
                                                     ..default()
                                                 },
-                                                TextColor(Talk_TextBox_NAME_COLOR),
+                                                TextColor(TALK_TEXTBOX_NAME_COLOR),
                                             ));
                                             //テキストボックスのテキスト部分
                                             parent.spawn((
@@ -97,12 +98,11 @@ pub fn create_text_window(
                                             r_active_datas.talk_index = Some(text.next_talk_element_id);
                                         }
                                         TalkElementType::Choice(choices) => {
-                                            //選択肢
+                                            //TODO [選択肢の場合のテキストボックス生成処理を実装]
                                         }
                                         TalkElementType::End => {}
                                     }
                                 });
-                                next_talk_textbox_state.set(TalkTextBoxState::Enabled);
                             },
                             NPCType::Merchant => {},
                             NPCType::QuestGiver => {}
@@ -122,6 +122,7 @@ pub fn read_talk_text(
     mut talk_textbox_elements: Query<(&mut Text, &TalkTextBlocks)>,
     key_map: Res<KeyMap>,
     key_input: Res<ButtonInput<KeyCode>>,
+    mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>
 ){
     if key_input.just_pressed(key_map.advance_text) {
         // 1. テキストボックスをリセット
@@ -141,7 +142,7 @@ pub fn read_talk_text(
                                 match &npc.npc_type{
                                     NPCType::Generic(talk_dialog) => {
                                         //ここでテキストウィンドウを表示する処理を実装する
-                                        println!("talk to npc id: {}", npc.id);
+                                        println!("> talk index: {}", r_active_datas.talk_index.unwrap());
                                         //会話データを持っているNPCのIDを保持
                                         r_active_datas.talking_npc = Some(npc.id);
                                         //最初の会話データを取得
@@ -150,22 +151,22 @@ pub fn read_talk_text(
                                             None => 0
                                         };
                                         let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == next_talk_index}).unwrap();
-                                        commands.spawn((
-                                            Node {
-                                                width: Val::Percent(80.0),
-                                                height: Val::Percent(30.0),
-                                                left: Val::Percent(10.0),
-                                                top: Val::Percent(70.0),
-                                                border: UiRect::all(Val::Px(2.0)),
-                                                flex_direction: FlexDirection::Column,
-                                                ..default()
-                                            },
-                                            BackgroundColor(Color::BLACK.with_alpha(0.7)),
-                                            BorderColor(LIGHT_GRAY.into()),
-                                            TalkTextBoxMarker,
-                                        )).with_children(|parent|{
-                                            match &next_talk_element.element_type{
-                                                TalkElementType::Text(text) => {
+                                        match &next_talk_element.element_type{
+                                            TalkElementType::Text(text) => {
+                                                commands.spawn((
+                                                    Node {
+                                                        width: Val::Percent(80.0),
+                                                        height: Val::Percent(30.0),
+                                                        left: Val::Percent(10.0),
+                                                        top: Val::Percent(70.0),
+                                                        border: UiRect::all(Val::Px(2.0)),
+                                                        flex_direction: FlexDirection::Column,
+                                                        ..default()
+                                                    },
+                                                    BackgroundColor(Color::BLACK.with_alpha(0.7)),
+                                                    BorderColor(LIGHT_GRAY.into()),
+                                                    TalkTextBoxMarker,
+                                                )).with_children(|parent|{
                                                     //テキストボックスの名前部分
                                                     parent.spawn((
                                                         Node{
@@ -194,7 +195,7 @@ pub fn read_talk_text(
                                                             font_size: 20.0,
                                                             ..default()
                                                         },
-                                                        TextColor(Talk_TextBox_NAME_COLOR),
+                                                        TextColor(TALK_TEXTBOX_NAME_COLOR),
                                                     ));
                                                     //テキストボックスのテキスト部分
                                                     parent.spawn((
@@ -212,14 +213,20 @@ pub fn read_talk_text(
                                                         },
                                                         TextColor(TEXT_COLOR),
                                                     ));
-                                                    r_active_datas.talk_index = Some(text.next_talk_element_id);
-                                                }
-                                                TalkElementType::Choice(choices) => {
-                                                    //選択肢
-                                                }
-                                                TalkElementType::End => {}
+                                                });
+                                                r_active_datas.talk_index = Some(text.next_talk_element_id);
                                             }
-                                        });
+                                            TalkElementType::Choice(choices) => {
+                                                //TODO [選択肢の場合のテキストボックス生成処理を実装]
+                                            }
+                                            TalkElementType::End => {
+                                                next_talk_textbox_state.set(TalkTextBoxState::Disabled);
+                                                //TODO [会話終了処理を実装]
+                                                r_active_datas.talk_index = None;
+                                                r_active_datas.talking_npc = None;
+                                                println!("> talk finished");
+                                            }
+                                        }
                                     },
                                     NPCType::Merchant => {},
                                     NPCType::QuestGiver => {}
