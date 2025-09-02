@@ -1,9 +1,15 @@
 use bevy::{color::palettes::css::{LIGHT_GRAY, WHITE}, prelude::*};
 
-use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkElement, TalkElementType, Talkers}, TalkTextBoxState}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent}}};
+use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkElement, TalkElementType, Talkers}, TalkTextBoxChoiceIndex, TalkTextBoxState, TalkTextBoxType}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent}}};
 
 #[derive(Component)]
 pub struct TalkTextBoxMarker;
+
+#[derive(Component)]
+pub struct TalkTextBoxChoiceMarker{
+    choice_id: u32,
+    next_choice_id: u32
+}
 
 #[derive(Component)]
 pub enum TalkTextBlocks{
@@ -18,6 +24,8 @@ pub fn create_text_window(
     mut r_active_datas: ResMut<ActiveDatas>,
     r_stages: Res<Stages>,
     mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>,
+    mut next_talk_textbox_type: ResMut<NextState<TalkTextBoxType>>,
+    mut r_talk_textbox_choice_index: ResMut<TalkTextBoxChoiceIndex>,
 ){
     for event in talk_to_npc_event_reader.read(){
         for stage in r_stages.stage_list.iter(){
@@ -96,6 +104,16 @@ pub fn create_text_window(
                                                 TextColor(TEXT_COLOR),
                                             ));
                                             r_active_datas.talk_index = Some(text.next_talk_element_id);
+                                            let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == text.next_talk_element_id}).unwrap();
+                                            match &next_talk_element.element_type{
+                                                TalkElementType::Text(_) => next_talk_textbox_type.set(TalkTextBoxType::Text),
+                                                TalkElementType::Choice(choice_elements) => {
+                                                    let next_first_choice = choice_elements.first().unwrap();
+                                                    next_talk_textbox_type.set(TalkTextBoxType::Choice(next_first_choice.next_talk_element_id));
+                                                    r_talk_textbox_choice_index.0 = 1;
+                                                },
+                                                TalkElementType::End => next_talk_textbox_type.set(TalkTextBoxType::Disabled),
+                                            }
                                         }
                                         TalkElementType::Choice(choices) => {
                                             //TODO [選択肢の場合のテキストボックス生成処理を実装]
@@ -122,7 +140,10 @@ pub fn read_talk_text(
     mut talk_textbox_elements: Query<(&mut Text, &TalkTextBlocks)>,
     key_map: Res<KeyMap>,
     key_input: Res<ButtonInput<KeyCode>>,
-    mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>
+    mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>,
+    talk_textbox_type: Res<State<TalkTextBoxType>>,
+    mut next_talk_textbox_type: ResMut<NextState<TalkTextBoxType>>,
+    mut r_talk_textbox_choice_index: ResMut<TalkTextBoxChoiceIndex>,
 ){
     if key_input.just_pressed(key_map.advance_text) {
         // 1. テキストボックスをリセット
@@ -215,9 +236,68 @@ pub fn read_talk_text(
                                                     ));
                                                 });
                                                 r_active_datas.talk_index = Some(text.next_talk_element_id);
+                                                let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == text.next_talk_element_id}).unwrap();
+                                                match &next_talk_element.element_type{
+                                                    TalkElementType::Text(_) => next_talk_textbox_type.set(TalkTextBoxType::Text),
+                                                    TalkElementType::Choice(choice_elements) => {
+                                                        let next_first_choice = choice_elements.first().unwrap();
+                                                        next_talk_textbox_type.set(TalkTextBoxType::Choice(next_first_choice.next_talk_element_id));
+                                                        r_talk_textbox_choice_index.0 = 1;
+                                                    },
+                                                    TalkElementType::End => next_talk_textbox_type.set(TalkTextBoxType::Disabled),
+                                                }
                                             }
                                             TalkElementType::Choice(choices) => {
                                                 //TODO [選択肢の場合のテキストボックス生成処理を実装]
+                                                commands.spawn((
+                                                    Node {
+                                                        width: Val::Percent(80.0),
+                                                        height: Val::Percent(30.0),
+                                                        left: Val::Percent(10.0),
+                                                        top: Val::Percent(70.0),
+                                                        border: UiRect::all(Val::Px(2.0)),
+                                                        flex_direction: FlexDirection::Column,
+                                                        ..default()
+                                                    },
+                                                    BackgroundColor(Color::BLACK.with_alpha(0.7)),
+                                                    BorderColor(LIGHT_GRAY.into()),
+                                                    TalkTextBoxMarker,
+                                                )).with_children(|parent|{
+                                                    for choice in choices{
+                                                        parent.spawn((
+                                                            Node{
+                                                                justify_content: JustifyContent::Center,
+                                                                align_items: AlignItems::FlexStart,
+                                                                margin: UiRect::left(Val::Px(3.0)),
+                                                                ..default()
+                                                            },
+                                                            TalkTextBoxChoiceMarker{
+                                                                choice_id: choice.choice_id,
+                                                                next_choice_id: choice.next_talk_element_id
+                                                            },
+                                                            Text(choice.text.clone()),
+                                                            TextFont {
+                                                                font_size: 20.0,
+                                                                ..default()
+                                                            },
+                                                            TextColor(
+                                                                if choice.choice_id == r_talk_textbox_choice_index.0{
+                                                                    println!("index {}is selected", choice.choice_id);
+                                                                    TALK_TEXTBOX_NAME_COLOR
+                                                                }else{
+                                                                    TEXT_COLOR
+                                                                }
+                                                            ),
+                                                        ));
+                                                    }
+                                                });
+                                                r_active_datas.talk_index = Some(r_talk_textbox_choice_index.0);
+                                                // match *talk_textbox_type.get() {
+                                                //     TalkTextBoxType::Choice(_) => {
+                                                //         r_active_datas.talk_index = Some(r_talk_textbox_choice_index.0);
+                                                //     }
+                                                //     _ => {}
+                                                // }
                                             }
                                             TalkElementType::End => {
                                                 next_talk_textbox_state.set(TalkTextBoxState::Disabled);
@@ -240,4 +320,40 @@ pub fn read_talk_text(
             }
         }
     }
+}
+
+pub fn flip_choice_color(
+    mut q_choice_text_color: Query<(&mut TextColor, &TalkTextBoxChoiceMarker)>,
+    key_map: Res<KeyMap>,
+    key_input: Res<ButtonInput<KeyCode>>,
+    mut r_talk_textbox_choice_index: ResMut<TalkTextBoxChoiceIndex>,
+    mut r_active_datas: ResMut<ActiveDatas>
+){
+    if key_input.just_pressed(key_map.interact) {
+    let mut found = false;
+    for (mut text_color, marker) in q_choice_text_color.iter_mut() {
+        if marker.choice_id == r_talk_textbox_choice_index.0 + 1 {
+            *text_color = TextColor(TALK_TEXTBOX_NAME_COLOR);
+            r_talk_textbox_choice_index.0 = marker.choice_id;
+            r_active_datas.talk_index = Some(marker.next_choice_id);
+            found = true;
+        } else {
+            *text_color = TextColor(TEXT_COLOR);
+        }
+    }
+
+    if !found {
+        // fallback: 最初の選択肢に戻す
+        for (mut text_color, marker) in q_choice_text_color.iter_mut() {
+            if marker.choice_id == 1 {
+                *text_color = TextColor(TALK_TEXTBOX_NAME_COLOR);
+                r_talk_textbox_choice_index.0 = marker.choice_id;
+                r_active_datas.talk_index = Some(marker.next_choice_id);
+            } else {
+                *text_color = TextColor(TEXT_COLOR);
+            }
+        }
+    }
+}
+
 }
