@@ -31,10 +31,12 @@ impl Default for TalkDialog {
                     local_talk_id: 2,
                     element_type: TalkElementType::Choice(vec![
                         TalkChoiceElement {
+                            choice_id: 1,
                             text: "Choice 1".to_string(),
                             next_talk_element_id: 3,
                         },
                         TalkChoiceElement {
+                            choice_id: 2,
                             text: "Choice 2".to_string(),
                             next_talk_element_id: 4,
                         },
@@ -42,7 +44,11 @@ impl Default for TalkDialog {
                 },
                 TalkElement {
                     local_talk_id: 3,
-                    element_type: TalkElementType::End,
+                    element_type: TalkElementType::Text(TalkTextElement {
+                        talker: Talkers::NPC(1),
+                        text: "Hello, Player! This is talk test 0-3".to_string(),
+                        next_talk_element_id: 4,
+                    }),
                 },
                 TalkElement {
                     local_talk_id: 4,
@@ -70,17 +76,19 @@ impl TalkDialog {
                     element_type: TalkElementType::Text(TalkTextElement {
                         talker: Talkers::NPC(id),
                         text: format!("Hello, Player! This is talk test {}-1", id),
-                        next_talk_element_id: 3,
+                        next_talk_element_id: 2,
                     }),
                 },
                 TalkElement {
                     local_talk_id: 2,
                     element_type: TalkElementType::Choice(vec![
                         TalkChoiceElement {
+                            choice_id: 1,
                             text: "Choice 1".to_string(),
                             next_talk_element_id: 3,
                         },
                         TalkChoiceElement {
+                            choice_id: 2,
                             text: "Choice 2".to_string(),
                             next_talk_element_id: 4,
                         },
@@ -88,7 +96,11 @@ impl TalkDialog {
                 },
                 TalkElement {
                     local_talk_id: 3,
-                    element_type: TalkElementType::End,
+                    element_type: TalkElementType::Text(TalkTextElement {
+                        talker: Talkers::NPC(1),
+                        text: "Hello, Player! This is talk test 0-3".to_string(),
+                        next_talk_element_id: 4,
+                    }),
                 },
                 TalkElement {
                     local_talk_id: 4,
@@ -129,6 +141,7 @@ pub enum Talkers {
 // 会話の選択肢要素
 #[derive(Component, PartialEq, Eq)]
 pub struct TalkChoiceElement {
+    pub choice_id: u32,
     pub text: String,
     pub next_talk_element_id: u32,
 }
