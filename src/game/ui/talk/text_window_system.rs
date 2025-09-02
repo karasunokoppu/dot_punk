@@ -8,6 +8,7 @@ pub struct TalkTextBoxMarker;
 #[derive(Component)]
 pub struct TalkTextBoxChoiceMarker{
     choice_id: u32,
+    next_choice_id: u32
 }
 
 #[derive(Component)]
@@ -270,7 +271,10 @@ pub fn read_talk_text(
                                                                 margin: UiRect::left(Val::Px(3.0)),
                                                                 ..default()
                                                             },
-                                                            TalkTextBoxChoiceMarker{choice_id: choice.choice_id},
+                                                            TalkTextBoxChoiceMarker{
+                                                                choice_id: choice.choice_id,
+                                                                next_choice_id: choice.next_talk_element_id
+                                                            },
                                                             Text(choice.text.clone()),
                                                             TextFont {
                                                                 font_size: 20.0,
@@ -325,19 +329,31 @@ pub fn flip_choice_color(
     mut r_talk_textbox_choice_index: ResMut<TalkTextBoxChoiceIndex>,
     mut r_active_datas: ResMut<ActiveDatas>
 ){
-    if key_input.just_pressed(key_map.interact){
-        let mut index: u32 = r_talk_textbox_choice_index.0;
-        for (mut text_color, talk_textbox_choice_marker) in q_choice_text_color.iter_mut(){
-            //TODO [選択肢の色を変える処理を修正]
-            if ((r_talk_textbox_choice_index.0)%2) + 1 == talk_textbox_choice_marker.choice_id{
+    if key_input.just_pressed(key_map.interact) {
+    let mut found = false;
+    for (mut text_color, marker) in q_choice_text_color.iter_mut() {
+        if marker.choice_id == r_talk_textbox_choice_index.0 + 1 {
+            *text_color = TextColor(TALK_TEXTBOX_NAME_COLOR);
+            r_talk_textbox_choice_index.0 = marker.choice_id;
+            r_active_datas.talk_index = Some(marker.next_choice_id);
+            found = true;
+        } else {
+            *text_color = TextColor(TEXT_COLOR);
+        }
+    }
+
+    if !found {
+        // fallback: 最初の選択肢に戻す
+        for (mut text_color, marker) in q_choice_text_color.iter_mut() {
+            if marker.choice_id == 1 {
                 *text_color = TextColor(TALK_TEXTBOX_NAME_COLOR);
-                index = talk_textbox_choice_marker.choice_id;
-                println!("index is: {index}");
-            }else{
+                r_talk_textbox_choice_index.0 = marker.choice_id;
+                r_active_datas.talk_index = Some(marker.next_choice_id);
+            } else {
                 *text_color = TextColor(TEXT_COLOR);
             }
         }
-        r_talk_textbox_choice_index.0 = index;
-        r_active_datas.talk_index = Some(r_talk_textbox_choice_index.0);
     }
+}
+
 }
