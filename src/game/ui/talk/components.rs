@@ -24,7 +24,7 @@ impl Default for TalkDialog {
                     element_type: TalkElementType::Text(TalkTextElement {
                         talker: Talkers::NPC(1),
                         text: "Hello, Player! This is talk test 0-1".to_string(),
-                        next_talk_element_id: 3,
+                        next_talk_element_id: 2,
                     }),
                 },
                 TalkElement {

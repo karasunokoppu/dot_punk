@@ -1,6 +1,6 @@
 use bevy::{color::palettes::css::{LIGHT_GRAY, WHITE}, prelude::*};
 
-use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkElement, TalkElementType, Talkers}, TalkTextBoxChoiceIndex, TalkTextBoxState, TalkTextBoxType}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent}}};
+use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkChoiceElement, TalkDialog, TalkElement, TalkElementType, TalkTextElement, Talkers}, TalkTextBoxChoiceIndex, TalkTextBoxState, TalkTextBoxType}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent, stage::component::Stage}}};
 
 #[derive(Component)]
 pub struct TalkTextBoxMarker;
@@ -41,86 +41,21 @@ pub fn create_text_window(
                                 let first_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == 0}).unwrap();
                                 next_talk_textbox_state.set(TalkTextBoxState::Enabled);
                                 //テキストボックス表示
-                                commands.spawn((
-                                    Node {
-                                        width: Val::Percent(80.0),
-                                        height: Val::Percent(30.0),
-                                        left: Val::Percent(10.0),
-                                        top: Val::Percent(70.0),
-                                        border: UiRect::all(Val::Px(2.0)),
-                                        flex_direction: FlexDirection::Column,
-                                        ..default()
-                                    },
-                                    BackgroundColor(Color::BLACK.with_alpha(0.7)),
-                                    BorderColor(LIGHT_GRAY.into()),
-                                    TalkTextBoxMarker,
-                                )).with_children(|parent|{
-                                    match &first_talk_element.element_type{
-                                        TalkElementType::Text(text) => {
-                                            //テキストボックスの名前部分
-                                            parent.spawn((
-                                                Node{
-                                                    justify_content: JustifyContent::Center,
-                                                    align_items: AlignItems::FlexStart,
-                                                    margin: UiRect {
-                                                        left: Val::Px(3.0),
-                                                        bottom: Val::Px(5.0),
-                                                        ..default()
-                                                    },
-                                                    ..default()
-                                                },
-                                                TalkTextBlocks::Name,
-                                                Text(
-                                                    match text.talker{
-                                                        Talkers::Player => "Player".to_string(),
-                                                        Talkers::NPC(npc_id) => {
-                                                            match stage.npcs.iter().find(|n| n.id == npc_id){
-                                                                Some(npc) => npc.name.clone(),
-                                                                None => "Unknown".to_string(),
-                                                            }
-                                                        }
-                                                    }
-                                                ),
-                                                TextFont {
-                                                    font_size: 20.0,
-                                                    ..default()
-                                                },
-                                                TextColor(TALK_TEXTBOX_NAME_COLOR),
-                                            ));
-                                            //テキストボックスのテキスト部分
-                                            parent.spawn((
-                                                Node{
-                                                    justify_content: JustifyContent::Center,
-                                                    align_items: AlignItems::FlexStart,
-                                                    margin: UiRect::left(Val::Px(3.0)),
-                                                    ..default()
-                                                },
-                                                TalkTextBlocks::Text,
-                                                Text(text.text.clone()),
-                                                TextFont {
-                                                    font_size: 20.0,
-                                                    ..default()
-                                                },
-                                                TextColor(TEXT_COLOR),
-                                            ));
-                                            r_active_datas.talk_index = Some(text.next_talk_element_id);
-                                            let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == text.next_talk_element_id}).unwrap();
-                                            match &next_talk_element.element_type{
-                                                TalkElementType::Text(_) => next_talk_textbox_type.set(TalkTextBoxType::Text),
-                                                TalkElementType::Choice(choice_elements) => {
-                                                    let next_first_choice = choice_elements.first().unwrap();
-                                                    next_talk_textbox_type.set(TalkTextBoxType::Choice(next_first_choice.next_talk_element_id));
-                                                    r_talk_textbox_choice_index.0 = 1;
-                                                },
-                                                TalkElementType::End => next_talk_textbox_type.set(TalkTextBoxType::Disabled),
-                                            }
-                                        }
-                                        TalkElementType::Choice(choices) => {
-                                            //TODO [選択肢の場合のテキストボックス生成処理を実装]
-                                        }
-                                        TalkElementType::End => {}
+                                match &first_talk_element.element_type{//TODO [first_talk_element.element_type以外同一]
+                                    TalkElementType::Text(text) => {
+                                        spawn_talk_textbox_text_ui(&mut commands, text, stage, &mut r_active_datas, talk_dialog, &mut next_talk_textbox_type, &mut r_talk_textbox_choice_index);
                                     }
-                                });
+                                    TalkElementType::Choice(choices) => {
+                                        spawn_talk_textbox_choice_ui(&mut commands, &mut r_active_datas, choices, &mut r_talk_textbox_choice_index);
+                                    }
+                                    TalkElementType::End => {
+                                        next_talk_textbox_state.set(TalkTextBoxState::Disabled);
+                                        //TODO [会話終了処理を実装]
+                                        r_active_datas.talk_index = None;
+                                        r_active_datas.talking_npc = None;
+                                        println!("> talk finished");
+                                    }
+                                }
                             },
                             NPCType::Merchant => {},
                             NPCType::QuestGiver => {}
@@ -137,11 +72,9 @@ pub fn read_talk_text(
     text_box: Query<Entity,With<TalkTextBoxMarker>>,
     mut r_active_datas: ResMut<ActiveDatas>,
     r_stages: Res<Stages>,
-    mut talk_textbox_elements: Query<(&mut Text, &TalkTextBlocks)>,
     key_map: Res<KeyMap>,
     key_input: Res<ButtonInput<KeyCode>>,
     mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>,
-    talk_textbox_type: Res<State<TalkTextBoxType>>,
     mut next_talk_textbox_type: ResMut<NextState<TalkTextBoxType>>,
     mut r_talk_textbox_choice_index: ResMut<TalkTextBoxChoiceIndex>,
 ){
@@ -174,130 +107,10 @@ pub fn read_talk_text(
                                         let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == next_talk_index}).unwrap();
                                         match &next_talk_element.element_type{
                                             TalkElementType::Text(text) => {
-                                                commands.spawn((
-                                                    Node {
-                                                        width: Val::Percent(80.0),
-                                                        height: Val::Percent(30.0),
-                                                        left: Val::Percent(10.0),
-                                                        top: Val::Percent(70.0),
-                                                        border: UiRect::all(Val::Px(2.0)),
-                                                        flex_direction: FlexDirection::Column,
-                                                        ..default()
-                                                    },
-                                                    BackgroundColor(Color::BLACK.with_alpha(0.7)),
-                                                    BorderColor(LIGHT_GRAY.into()),
-                                                    TalkTextBoxMarker,
-                                                )).with_children(|parent|{
-                                                    //テキストボックスの名前部分
-                                                    parent.spawn((
-                                                        Node{
-                                                            justify_content: JustifyContent::Center,
-                                                            align_items: AlignItems::FlexStart,
-                                                            margin: UiRect {
-                                                                left: Val::Px(3.0),
-                                                                bottom: Val::Px(5.0),
-                                                                ..default()
-                                                            },
-                                                            ..default()
-                                                        },
-                                                        TalkTextBlocks::Name,
-                                                        Text(
-                                                            match text.talker{
-                                                                Talkers::Player => "Player".to_string(),
-                                                                Talkers::NPC(npc_id) => {
-                                                                    match stage.npcs.iter().find(|n| n.id == npc_id){
-                                                                        Some(npc) => npc.name.clone(),
-                                                                        None => "Unknown".to_string(),
-                                                                    }
-                                                                }
-                                                            }
-                                                        ),
-                                                        TextFont {
-                                                            font_size: 20.0,
-                                                            ..default()
-                                                        },
-                                                        TextColor(TALK_TEXTBOX_NAME_COLOR),
-                                                    ));
-                                                    //テキストボックスのテキスト部分
-                                                    parent.spawn((
-                                                        Node{
-                                                            justify_content: JustifyContent::Center,
-                                                            align_items: AlignItems::FlexStart,
-                                                            margin: UiRect::left(Val::Px(3.0)),
-                                                            ..default()
-                                                        },
-                                                        TalkTextBlocks::Text,
-                                                        Text(text.text.clone()),
-                                                        TextFont {
-                                                            font_size: 20.0,
-                                                            ..default()
-                                                        },
-                                                        TextColor(TEXT_COLOR),
-                                                    ));
-                                                });
-                                                r_active_datas.talk_index = Some(text.next_talk_element_id);
-                                                let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == text.next_talk_element_id}).unwrap();
-                                                match &next_talk_element.element_type{
-                                                    TalkElementType::Text(_) => next_talk_textbox_type.set(TalkTextBoxType::Text),
-                                                    TalkElementType::Choice(choice_elements) => {
-                                                        let next_first_choice = choice_elements.first().unwrap();
-                                                        next_talk_textbox_type.set(TalkTextBoxType::Choice(next_first_choice.next_talk_element_id));
-                                                        r_talk_textbox_choice_index.0 = 1;
-                                                    },
-                                                    TalkElementType::End => next_talk_textbox_type.set(TalkTextBoxType::Disabled),
-                                                }
+                                                spawn_talk_textbox_text_ui(&mut commands, text, stage, &mut r_active_datas, talk_dialog, &mut next_talk_textbox_type, &mut r_talk_textbox_choice_index);
                                             }
                                             TalkElementType::Choice(choices) => {
-                                                //TODO [選択肢の場合のテキストボックス生成処理を実装]
-                                                commands.spawn((
-                                                    Node {
-                                                        width: Val::Percent(80.0),
-                                                        height: Val::Percent(30.0),
-                                                        left: Val::Percent(10.0),
-                                                        top: Val::Percent(70.0),
-                                                        border: UiRect::all(Val::Px(2.0)),
-                                                        flex_direction: FlexDirection::Column,
-                                                        ..default()
-                                                    },
-                                                    BackgroundColor(Color::BLACK.with_alpha(0.7)),
-                                                    BorderColor(LIGHT_GRAY.into()),
-                                                    TalkTextBoxMarker,
-                                                )).with_children(|parent|{
-                                                    for choice in choices{
-                                                        parent.spawn((
-                                                            Node{
-                                                                justify_content: JustifyContent::Center,
-                                                                align_items: AlignItems::FlexStart,
-                                                                margin: UiRect::left(Val::Px(3.0)),
-                                                                ..default()
-                                                            },
-                                                            TalkTextBoxChoiceMarker{
-                                                                choice_id: choice.choice_id,
-                                                                next_choice_id: choice.next_talk_element_id
-                                                            },
-                                                            Text(choice.text.clone()),
-                                                            TextFont {
-                                                                font_size: 20.0,
-                                                                ..default()
-                                                            },
-                                                            TextColor(
-                                                                if choice.choice_id == r_talk_textbox_choice_index.0{
-                                                                    println!("index {}is selected", choice.choice_id);
-                                                                    TALK_TEXTBOX_NAME_COLOR
-                                                                }else{
-                                                                    TEXT_COLOR
-                                                                }
-                                                            ),
-                                                        ));
-                                                    }
-                                                });
-                                                r_active_datas.talk_index = Some(r_talk_textbox_choice_index.0);
-                                                // match *talk_textbox_type.get() {
-                                                //     TalkTextBoxType::Choice(_) => {
-                                                //         r_active_datas.talk_index = Some(r_talk_textbox_choice_index.0);
-                                                //     }
-                                                //     _ => {}
-                                                // }
+                                                spawn_talk_textbox_choice_ui(&mut commands, &mut r_active_datas, choices, &mut r_talk_textbox_choice_index);
                                             }
                                             TalkElementType::End => {
                                                 next_talk_textbox_state.set(TalkTextBoxState::Disabled);
@@ -311,7 +124,6 @@ pub fn read_talk_text(
                                     NPCType::Merchant => {},
                                     NPCType::QuestGiver => {}
                                 }
-                                //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ここまで~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             }
                         }
                         None => {}
@@ -320,6 +132,141 @@ pub fn read_talk_text(
             }
         }
     }
+}
+
+pub fn spawn_talk_textbox_text_ui(
+    commands: &mut Commands,
+    text: &TalkTextElement,
+    stage: &Stage,
+    r_active_datas: &mut ResMut<ActiveDatas>,
+    talk_dialog: &TalkDialog,
+    next_talk_textbox_type: &mut ResMut<NextState<TalkTextBoxType>>,
+    r_talk_textbox_choice_index: &mut ResMut<TalkTextBoxChoiceIndex>,
+){
+    commands.spawn((
+        Node {
+            width: Val::Percent(80.0),
+            height: Val::Percent(30.0),
+            left: Val::Percent(10.0),
+            top: Val::Percent(70.0),
+            border: UiRect::all(Val::Px(2.0)),
+            flex_direction: FlexDirection::Column,
+            ..default()
+        },
+        BackgroundColor(Color::BLACK.with_alpha(0.7)),
+        BorderColor(LIGHT_GRAY.into()),
+        TalkTextBoxMarker,
+    )).with_children(|parent|{
+        //テキストボックスの名前部分
+        parent.spawn((
+            Node{
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::FlexStart,
+                margin: UiRect {
+                    left: Val::Px(3.0),
+                    bottom: Val::Px(5.0),
+                    ..default()
+                },
+                ..default()
+            },
+            TalkTextBlocks::Name,
+            Text(
+                match text.talker{
+                    Talkers::Player => "Player".to_string(),
+                    Talkers::NPC(npc_id) => {
+                        match stage.npcs.iter().find(|n| n.id == npc_id){
+                            Some(npc) => npc.name.clone(),
+                            None => "Unknown".to_string(),
+                        }
+                    }
+                }
+            ),
+            TextFont {
+                font_size: 20.0,
+                ..default()
+            },
+            TextColor(TALK_TEXTBOX_NAME_COLOR),
+        ));
+        //テキストボックスのテキスト部分
+        parent.spawn((
+            Node{
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::FlexStart,
+                margin: UiRect::left(Val::Px(3.0)),
+                ..default()
+            },
+            TalkTextBlocks::Text,
+            Text(text.text.clone()),
+            TextFont {
+                font_size: 20.0,
+                ..default()
+            },
+            TextColor(TEXT_COLOR),
+        ));
+    });
+    r_active_datas.talk_index = Some(text.next_talk_element_id);
+    let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == text.next_talk_element_id}).unwrap();
+    match &next_talk_element.element_type{
+        TalkElementType::Text(_) => next_talk_textbox_type.set(TalkTextBoxType::Text),
+        TalkElementType::Choice(choice_elements) => {
+            let next_first_choice = choice_elements.first().unwrap();
+            next_talk_textbox_type.set(TalkTextBoxType::Choice(next_first_choice.next_talk_element_id));
+            r_talk_textbox_choice_index.0 = 1;
+        },
+        TalkElementType::End => next_talk_textbox_type.set(TalkTextBoxType::Disabled),
+    }
+}
+
+pub fn spawn_talk_textbox_choice_ui(
+    commands: &mut Commands,
+    r_active_datas: &mut ResMut<ActiveDatas>,
+    choices: &Vec<TalkChoiceElement>,
+    r_talk_textbox_choice_index: &mut ResMut<TalkTextBoxChoiceIndex>,
+){
+    commands.spawn((
+        Node {
+            width: Val::Percent(80.0),
+            height: Val::Percent(30.0),
+            left: Val::Percent(10.0),
+            top: Val::Percent(70.0),
+            border: UiRect::all(Val::Px(2.0)),
+            flex_direction: FlexDirection::Column,
+            ..default()
+        },
+        BackgroundColor(Color::BLACK.with_alpha(0.7)),
+        BorderColor(LIGHT_GRAY.into()),
+        TalkTextBoxMarker,
+    )).with_children(|parent|{
+        for choice in choices{
+            parent.spawn((
+                Node{
+                    justify_content: JustifyContent::Center,
+                    align_items: AlignItems::FlexStart,
+                    margin: UiRect::left(Val::Px(3.0)),
+                    ..default()
+                },
+                TalkTextBoxChoiceMarker{
+                    choice_id: choice.choice_id,
+                    next_choice_id: choice.next_talk_element_id
+                },
+                Text(choice.text.clone()),
+                TextFont {
+                    font_size: 20.0,
+                    ..default()
+                },
+                TextColor(
+                    if choice.choice_id == r_talk_textbox_choice_index.0{
+                        println!("index {}is selected", choice.choice_id);
+                        TALK_TEXTBOX_NAME_COLOR
+                    }else{
+                        TEXT_COLOR
+                    }
+                ),
+            ));
+        }
+    });
+    r_active_datas.talk_index = Some(choices.first().unwrap().next_talk_element_id);
+    r_talk_textbox_choice_index.0 = 1;
 }
 
 pub fn flip_choice_color(
