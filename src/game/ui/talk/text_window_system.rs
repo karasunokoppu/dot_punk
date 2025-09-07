@@ -17,7 +17,6 @@ pub enum TalkTextBlocks{
     Text,
 }
 
-//TODO [TalkToNPCEventが送信されたらテキストウィンドウを表示するシステムを実装する]
 pub fn create_text_window(
     mut commands: Commands,
     mut talk_to_npc_event_reader: EventReader<TalkToNPCEvent>,
@@ -50,7 +49,6 @@ pub fn create_text_window(
                                     }
                                     TalkElementType::End => {
                                         next_talk_textbox_state.set(TalkTextBoxState::Disabled);
-                                        //TODO [会話終了処理を実装]
                                         r_active_datas.talk_index = None;
                                         r_active_datas.talking_npc = None;
                                         println!("> talk finished");
@@ -92,7 +90,6 @@ pub fn read_talk_text(
                         Some(npc_id) => {
                             if npc.id == npc_id{
                                 // 2-2. テキストボックスを再構成して表示
-                                //TODO [関数として切り出しても良いかも]~~~~~~~~~~~~~~~~~~~~~ここから~~~~~~~~~~~~~~~~~~~~~~~~
                                 match &npc.npc_type{
                                     NPCType::Generic(talk_dialog) => {
                                         //ここでテキストウィンドウを表示する処理を実装する
@@ -114,7 +111,6 @@ pub fn read_talk_text(
                                             }
                                             TalkElementType::End => {
                                                 next_talk_textbox_state.set(TalkTextBoxState::Disabled);
-                                                //TODO [会話終了処理を実装]
                                                 r_active_datas.talk_index = None;
                                                 r_active_datas.talking_npc = None;
                                                 println!("> talk finished");
