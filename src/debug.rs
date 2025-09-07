@@ -3,9 +3,9 @@ use bevy::prelude::*;
 use crate::{
     core::{
         resource::{ActiveDatas, Player},
-        systems::despawn_screen,
+        systems::{despawn_screen, state_change_detect},
         ui::style::TEXT_COLOR,
-    }, game::world::player::interact_entity::InteractEntities, GameState
+    }, game::{ui::{pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk::{TalkTextBoxState, TalkTextBoxType}}, world::player::interact_entity::InteractEntities}, states::{in_game::{player_states::{ActionStates, JumpState, MoveStates}, InGameState, PauseState}, main_menu::setting_ui::MainSettingMenuState}, GameState
 };
 
 pub fn debug_plungin(app: &mut App) {
@@ -20,7 +20,20 @@ pub fn debug_plungin(app: &mut App) {
         )
         .add_systems(
             Update,
-            (update_debug_info,).run_if(in_state(DebugModeState::On)),
+            (
+                update_debug_info,
+                state_change_detect::<InGameState>,
+                state_change_detect::<PauseState>,
+                state_change_detect::<ActionStates>,
+                state_change_detect::<MoveStates>,
+                state_change_detect::<JumpState>,
+                state_change_detect::<MainSettingMenuState>,
+                state_change_detect::<DebugModeState>,
+                state_change_detect::<PauseButtonAction>,
+                state_change_detect::<PauseSettingMenuState>,
+                state_change_detect::<TalkTextBoxState>,
+                state_change_detect::<TalkTextBoxType>,
+            ).run_if(in_state(DebugModeState::On)),
         );
 }
 

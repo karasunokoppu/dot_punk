@@ -5,7 +5,7 @@ use crate::{
         components::{Position, SpriteData},
         resource::Stages,
     },
-    game::{ui::talk::components::TalkDialog, world::{
+    game::{world::{
         map::components::{Map, TeleportNode, WallColliderNode}, npc::components::{NPCType, NPC}, stage::component::Stage
     }},
 };
