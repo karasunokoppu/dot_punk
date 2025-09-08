@@ -1,7 +1,7 @@
 use crate::{
-    core::components::{Position, SpriteData},
+    core::{components::{Position, SpriteData}, setting::game_setting::{MOST_DARKER_BRIGHTNESS, ONE_DAY_HOUR, ONE_HOUR_MINUTE}},
     game::world::{
-        player::{interact_entity::{InteractEntities, NPCMarker}, components::Direction, states_components::EntityStates},
+        player::{components::Direction, interact_entity::{InteractEntities, NPCMarker}, states_components::EntityStates},
         stage::component::Stage,
     },
 };
@@ -30,6 +30,36 @@ impl Default for ActiveDatas {
             closest_interact_entity_type: InteractEntities::NPC(NPCMarker { id: 0}),
             talking_npc: None,
             talk_index: None,
+        }
+    }
+}
+
+#[derive(Resource, Default, Clone)]
+pub struct InWorldTime{
+    pub hour: i32,
+    pub minute: i32,
+}
+impl InWorldTime {
+    pub fn add_time(self: &Self, hour: i32, minute: i32) -> Self{
+        let added_minute = self.minute + minute;
+        let add_hour = added_minute / ONE_HOUR_MINUTE;
+        let new_minute = added_minute % ONE_HOUR_MINUTE;
+        let added_hour = self.hour + hour + add_hour;
+        let new_hour = added_hour % ONE_DAY_HOUR;
+        InWorldTime {
+            hour: new_hour,
+            minute: new_minute
+        }
+    }
+
+    pub fn get_brightness_from_time(self: &Self) -> f32{
+        let current_time = self.hour * ONE_HOUR_MINUTE + self.minute;
+        let all_minute = ONE_DAY_HOUR * ONE_HOUR_MINUTE;
+        let brightness: f32 = current_time as f32 / (all_minute / 2) as f32 - 1.0;
+        if brightness.abs() <= MOST_DARKER_BRIGHTNESS {
+            brightness.abs()
+        }else{
+            MOST_DARKER_BRIGHTNESS
         }
     }
 }
