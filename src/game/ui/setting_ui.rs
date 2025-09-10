@@ -2,17 +2,17 @@ use bevy::prelude::*;
 
 use crate::{
     core::ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
-    states::main_menu::MenuState,
+    game::ui::pause_menu::PauseButtonAction, states::in_game::InGameState,
 };
 
 // Tag component used to tag entities added on the settings menu screen
 #[derive(Component)]
-pub struct OnSettingsMenuScreen;
+pub struct OnPauseSettingsMenuScreen;
 #[derive(Component)]
 pub struct OnSettingsMenu;
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States, Component)]
-pub enum MainSettingMenuState {
+pub enum PauseSettingMenuState {
     #[default]
     Disabled,
     Display,
@@ -22,7 +22,7 @@ pub enum MainSettingMenuState {
 }
 
 #[derive(Component)]
-pub enum MainSettingMenuSideBarAction {
+pub enum PauseSettingMenuSideBarAction {
     Display,
     Sound,
     KeyBind,
@@ -31,7 +31,7 @@ pub enum MainSettingMenuSideBarAction {
 }
 
 //TODO [設定UIを作成。Display, Sound, KeyBind, Interface]
-pub fn main_setting_menu_setup(mut commands: Commands) {
+pub fn pause_setting_menu_setup(mut commands: Commands) {
     // Common style for Side Bar buttons on the screen
     let side_button_node = Node {
         width: Val::Px(300.0),
@@ -55,7 +55,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                 ..default()
             },
             BackgroundColor(BACK_GROUND_COLOR),
-            OnSettingsMenuScreen,
+            OnPauseSettingsMenuScreen,
         ))
         .with_children(|parent| {
             //2. Side Bar
@@ -74,7 +74,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         Button,
                         side_button_node.clone(),
                         BackgroundColor(NORMAL_BUTTON),
-                        MainSettingMenuSideBarAction::Display,
+                        PauseSettingMenuSideBarAction::Display,
                         children![
                             // (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
                             (
@@ -88,7 +88,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         Button,
                         side_button_node.clone(),
                         BackgroundColor(NORMAL_BUTTON),
-                        MainSettingMenuSideBarAction::Sound,
+                        PauseSettingMenuSideBarAction::Sound,
                         children![
                             // (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
                             (
@@ -102,7 +102,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         Button,
                         side_button_node.clone(),
                         BackgroundColor(NORMAL_BUTTON),
-                        MainSettingMenuSideBarAction::KeyBind,
+                        PauseSettingMenuSideBarAction::KeyBind,
                         children![
                             // (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
                             (
@@ -116,7 +116,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         Button,
                         side_button_node.clone(),
                         BackgroundColor(NORMAL_BUTTON),
-                        MainSettingMenuSideBarAction::Interface,
+                        PauseSettingMenuSideBarAction::Interface,
                         children![
                             // (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
                             (
@@ -130,7 +130,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                         Button,
                         side_button_node.clone(),
                         BackgroundColor(NORMAL_BUTTON),
-                        MainSettingMenuSideBarAction::Back,
+                        PauseSettingMenuSideBarAction::Back,
                         children![
                             // (ImageNode::new(right_icon.clone()), button_icon_node.clone()),
                             (
@@ -161,7 +161,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                             ..default()
                         },
                         BackgroundColor(Color::BLACK),
-                        MainSettingMenuState::Display,
+                        PauseSettingMenuState::Display,
                     ));
                     parent.spawn((
                         Node {
@@ -171,7 +171,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                             ..default()
                         },
                         BackgroundColor(Color::WHITE),
-                        MainSettingMenuState::Sound,
+                        PauseSettingMenuState::Sound,
                     ));
                     parent.spawn((
                         Node {
@@ -181,7 +181,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                             ..default()
                         },
                         BackgroundColor(Color::srgb(1.0, 0.0, 0.0)),
-                        MainSettingMenuState::KeyBind,
+                        PauseSettingMenuState::KeyBind,
                     ));
                     parent.spawn((
                         Node {
@@ -191,7 +191,7 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
                             ..default()
                         },
                         BackgroundColor(Color::srgb(0.0, 1.0, 0.0)),
-                        MainSettingMenuState::Interface,
+                        PauseSettingMenuState::Interface,
                     ));
                 });
         });
@@ -199,35 +199,37 @@ pub fn main_setting_menu_setup(mut commands: Commands) {
 
 pub fn setting_menu_action(
     interaction_query: Query<
-        (&Interaction, &MainSettingMenuSideBarAction),
+        (&Interaction, &PauseSettingMenuSideBarAction),
         (Changed<Interaction>, With<Button>),
     >,
-    mut next_menu_state: ResMut<NextState<MenuState>>,
-    mut main_setting_menu_state: ResMut<NextState<MainSettingMenuState>>,
-    mut target_bundle: Query<(&mut Node, &MainSettingMenuState)>,
+    mut next_pause_buttun_state: ResMut<NextState<PauseButtonAction>>,
+    mut pause_setting_menu_state: ResMut<NextState<PauseSettingMenuState>>,
+    mut next_in_game_state: ResMut<NextState<InGameState>>,
+    mut target_bundle: Query<(&mut Node, &PauseSettingMenuState)>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
-                MainSettingMenuSideBarAction::Display => {
-                    swap_setting_menu(MainSettingMenuState::Display, &mut target_bundle);
-                    main_setting_menu_state.set(MainSettingMenuState::Display);
+                PauseSettingMenuSideBarAction::Display => {
+                    swap_setting_menu(PauseSettingMenuState::Display, &mut target_bundle);
+                    pause_setting_menu_state.set(PauseSettingMenuState::Display);
                 }
-                MainSettingMenuSideBarAction::Sound => {
-                    swap_setting_menu(MainSettingMenuState::Sound, &mut target_bundle);
-                    main_setting_menu_state.set(MainSettingMenuState::Sound);
+                PauseSettingMenuSideBarAction::Sound => {
+                    swap_setting_menu(PauseSettingMenuState::Sound, &mut target_bundle);
+                    pause_setting_menu_state.set(PauseSettingMenuState::Sound);
                 }
-                MainSettingMenuSideBarAction::KeyBind => {
-                    swap_setting_menu(MainSettingMenuState::KeyBind, &mut target_bundle);
-                    main_setting_menu_state.set(MainSettingMenuState::KeyBind);
+                PauseSettingMenuSideBarAction::KeyBind => {
+                    swap_setting_menu(PauseSettingMenuState::KeyBind, &mut target_bundle);
+                    pause_setting_menu_state.set(PauseSettingMenuState::KeyBind);
                 }
-                MainSettingMenuSideBarAction::Interface => {
-                    swap_setting_menu(MainSettingMenuState::Interface, &mut target_bundle);
-                    main_setting_menu_state.set(MainSettingMenuState::Interface);
+                PauseSettingMenuSideBarAction::Interface => {
+                    swap_setting_menu(PauseSettingMenuState::Interface, &mut target_bundle);
+                    pause_setting_menu_state.set(PauseSettingMenuState::Interface);
                 }
-                MainSettingMenuSideBarAction::Back => {
-                    main_setting_menu_state.set(MainSettingMenuState::Disabled);
-                    next_menu_state.set(MenuState::Main);
+                PauseSettingMenuSideBarAction::Back => {
+                    pause_setting_menu_state.set(PauseSettingMenuState::Disabled);
+                    next_pause_buttun_state.set(PauseButtonAction::Disabled);
+                    next_in_game_state.set(InGameState::Playing);
                 }
             }
         }
@@ -235,11 +237,11 @@ pub fn setting_menu_action(
 }
 
 pub fn swap_setting_menu(
-    activated_setting: MainSettingMenuState,
-    target_bundle: &mut Query<(&mut Node, &MainSettingMenuState)>,
+    activated_setting: PauseSettingMenuState,
+    target_bundle: &mut Query<(&mut Node, &PauseSettingMenuState)>,
 ) {
-    for (mut node, main_setting_menu_state) in target_bundle {
-        if *main_setting_menu_state == activated_setting {
+    for (mut node, pause_setting_menu_state) in target_bundle {
+        if *pause_setting_menu_state == activated_setting {
             node.display = Display::Block
         } else {
             node.display = Display::None

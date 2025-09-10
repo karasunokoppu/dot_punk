@@ -1,22 +1,21 @@
 use bevy::prelude::*;
 
 use crate::{
-    GameState,
-    core::setting::key_map,
-    core::ui::style::{NORMAL_BUTTON, TEXT_COLOR},
-    states::in_game::{InGameState, PauseState},
+    core::{setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, game::ui::talk::TalkTextBoxState, states::in_game::{InGameState, PauseState}, GameState
 };
 
 #[derive(Component)]
 pub struct OnPauseMenuScreen;
 
-#[derive(Component)]
+#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States, Component)]
 pub enum PauseButtonAction {
     Save,
     Load,
     Settings,
     MainMenu,
     Quit,
+    #[default]
+    Disabled,
 }
 
 pub fn toggle_pause_menu(
@@ -189,31 +188,47 @@ pub fn pause_menu_action(
         (Changed<Interaction>, With<Button>),
     >,
     mut app_exit_events: EventWriter<AppExit>,
+    mut next_talk_textbox_state: ResMut<NextState<TalkTextBoxState>>,
     mut next_pause_menu_state: ResMut<NextState<PauseState>>,
     mut next_in_game_state: ResMut<NextState<InGameState>>,
     mut next_game_state: ResMut<NextState<GameState>>,
-    //Main Menu
+    mut next_debug_modestate: ResMut<NextState<DebugModeState>>,
+    mut next_in_pause_state: ResMut<NextState<PauseButtonAction>>, //Main Menu
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 PauseButtonAction::Save => {
+                    next_in_game_state.set(InGameState::Playing);//(仮)
+                    next_debug_modestate.set(DebugModeState::Off);
+                    next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Save);
                     //1. save the datas
                     //2. change the state
                     println!(">! Save action triggered");
                 }
                 PauseButtonAction::Load => {
+                    next_in_game_state.set(InGameState::Playing);//(仮)
+                    next_debug_modestate.set(DebugModeState::Off);
+                    next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Load);
                     //1. load the datas
                     //2. change the state
                     println!(">! Load action triggered");
                 }
                 PauseButtonAction::Settings => {
+                    next_debug_modestate.set(DebugModeState::Off);
+                    next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Settings);
                     //1. change the state
                     println!(">! Settings action triggered");
                 }
                 PauseButtonAction::MainMenu => {
+                    next_talk_textbox_state.set(TalkTextBoxState::Disabled);
+                    next_debug_modestate.set(DebugModeState::Off);
                     next_in_game_state.set(InGameState::Disabled);
                     next_pause_menu_state.set(PauseState::Disabled);
+                    next_in_pause_state.set(PauseButtonAction::Disabled);
                     next_game_state.set(GameState::MainMenu);
                     println!(">! Main Menu action triggered");
                 }
@@ -221,6 +236,7 @@ pub fn pause_menu_action(
                     println!(">! Quit action triggered");
                     app_exit_events.write(AppExit::Success);
                 }
+                _ => {}
             }
         }
     }

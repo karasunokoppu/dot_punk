@@ -1,8 +1,13 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::components::{Position, SpriteData},
-    game::world::map::components::{Map, Maps, TeleportNode, WallColliderNode},
+    core::{
+        components::{Position, SpriteData},
+        resource::Stages,
+    },
+    game::{world::{
+        map::components::{Map, TeleportNode, WallColliderNode}, npc::components::{NPCType, NPC}, stage::component::Stage
+    }},
 };
 
 //How to register stage to the game
@@ -10,10 +15,8 @@ use crate::{
 //2. Push the Map in the Maps resource
 //3. Register the stage in the map_plugin function
 
-pub fn register_stage001(mut r_maps: ResMut<Maps>) {
+pub fn register_stage001(mut r_stages: ResMut<Stages>) {
     let map001: Map = Map {
-        id: 1,
-        name: "Map001".to_string(),
         sprites: vec![
             // スプライトデータの例
             SpriteData {
@@ -50,7 +53,7 @@ pub fn register_stage001(mut r_maps: ResMut<Maps>) {
                     x: 300.0,
                     y: -200.0,
                 },
-                target_map: 0, // テレポート先のマップID
+                target_stage: 0, // テレポート先のマップID
                 teleport_position: Position {
                     x: -50.0,
                     y: -100.0,
@@ -58,6 +61,22 @@ pub fn register_stage001(mut r_maps: ResMut<Maps>) {
             },
         ],
     };
+    let npcs001: Vec<NPC> = vec![
+        NPC {
+            id: 3,
+            name: "Citizen 03".to_string(),
+            npc_type: NPCType::Merchant,
+            position: Position { x: 200.0, y: -45.0 },
+            ..default()
+        },
+        NPC::new(4).with_position(Position {x: -153.0, y: -109.0}),
+    ];
+    let stage001 = Stage {
+        id: 1,
+        name: "Map001".to_string(),
+        map: map001,
+        npcs: npcs001,
+    };
     // マップデータをロード
-    r_maps.map_list.push(map001);
+    r_stages.stage_list.push(stage001);
 }

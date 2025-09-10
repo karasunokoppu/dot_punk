@@ -1,14 +1,40 @@
 use bevy::prelude::*;
 
-use crate::{core::{resource::{ActiveDatas, Player}, systems::despawn_screen, ui::style::TEXT_COLOR}, GameState};
+use crate::{
+    core::{
+        resource::{ActiveDatas, Player},
+        systems::{despawn_screen, state_change_detect},
+        ui::style::TEXT_COLOR,
+    }, game::{ui::{pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk::{TalkTextBoxState, TalkTextBoxType}}, world::player::interact_entity::InteractEntities}, states::{in_game::{player_states::{ActionStates, JumpState, MoveStates}, InGameState, PauseState}, main_menu::setting_ui::MainSettingMenuState}, GameState
+};
 
 pub fn debug_plungin(app: &mut App) {
     app.add_systems(OnEnter(DebugModeState::On), spawn_debug_information)
-        .add_systems(OnExit(DebugModeState::On),despawn_screen::<DebugModeMarker>)
-        .add_systems(Update, toggle_debug_mode.run_if(in_state(GameState::InGame)))
-        .add_systems(Update, (
-            update_debug_info,
-        ).run_if(in_state(DebugModeState::On)));
+        .add_systems(
+            OnExit(DebugModeState::On),
+            despawn_screen::<DebugModeMarker>,
+        )
+        .add_systems(
+            Update,
+            toggle_debug_mode.run_if(in_state(GameState::InGame)),
+        )
+        .add_systems(
+            Update,
+            (
+                update_debug_info,
+                state_change_detect::<InGameState>,
+                state_change_detect::<PauseState>,
+                state_change_detect::<ActionStates>,
+                state_change_detect::<MoveStates>,
+                state_change_detect::<JumpState>,
+                state_change_detect::<MainSettingMenuState>,
+                state_change_detect::<DebugModeState>,
+                state_change_detect::<PauseButtonAction>,
+                state_change_detect::<PauseSettingMenuState>,
+                state_change_detect::<TalkTextBoxState>,
+                state_change_detect::<TalkTextBoxType>,
+            ).run_if(in_state(DebugModeState::On)),
+        );
 }
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
@@ -19,9 +45,10 @@ pub enum DebugModeState {
 }
 
 #[derive(Component, PartialEq)]
-pub enum DebugInfoMarker{
+pub enum DebugInfoMarker {
     PlayerPosition,
     PlayerDirection,
+    ClosestActivateEntity,
     PlayerStatesHP,
     PlayerStatesMP,
     MapName,
@@ -44,123 +71,171 @@ pub fn toggle_debug_mode(
     }
 }
 
-pub fn spawn_debug_information(
-    mut commands: Commands,
-    r_player: Res<Player>,
-) {
-    commands.spawn((
-        DebugModeMarker,
-        Node{
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            flex_direction: FlexDirection::Column,
-            align_items: AlignItems::Baseline,
-            ..default()
-        },
-        BackgroundColor(Color::BLACK.with_alpha(0.4)),
-        GlobalZIndex(200),
-    )).with_children(|parent| {
-        parent.spawn(Node{
-            flex_direction: FlexDirection::Column,
-            ..default()
-        }).with_children(|parent| {
-            // Player informations
+pub fn spawn_debug_information(mut commands: Commands, r_player: Res<Player>) {
+    commands
+        .spawn((
+            DebugModeMarker,
+            Node {
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                flex_direction: FlexDirection::Column,
+                align_items: AlignItems::Baseline,
+                ..default()
+            },
+            BackgroundColor(Color::BLACK.with_alpha(0.4)),
+            GlobalZIndex(200),
+        ))
+        .with_children(|parent| {
+            parent
+                .spawn(Node {
+                    flex_direction: FlexDirection::Column,
+                    ..default()
+                })
+                .with_children(|parent| {
+                    // Player informations
+                    parent.spawn((
+                        Text("Player".to_string()),
+                        TextFont {
+                            font_size: 30.0,
+                            ..default()
+                        },
+                        TextColor(TEXT_COLOR),
+                    ));
+                    parent.spawn((
+                        Text(format!("player name: {}", r_player.name)),
+                        TextFont {
+                            font_size: 20.0,
+                            ..default()
+                        },
+                        TextColor(TEXT_COLOR),
+                    ));
+                    // Player position
+                    parent
+                        .spawn((
+                            Text("player position: ".to_string()),
+                            TextFont {
+                                font_size: 20.0,
+                                ..default()
+                            },
+                            TextColor(TEXT_COLOR),
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextSpan::default(),
+                                TextFont {
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                                TextColor(TEXT_COLOR),
+                                DebugInfoMarker::PlayerPosition,
+                            ));
+                        });
+                    // Player direction
+                    parent
+                        .spawn((
+                            Text("player direction: ".to_string()),
+                            TextFont {
+                                font_size: 20.0,
+                                ..default()
+                            },
+                            TextColor(TEXT_COLOR),
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextSpan::default(),
+                                TextFont {
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                                TextColor(TEXT_COLOR),
+                                DebugInfoMarker::PlayerDirection,
+                            ));
+                        });
+                    // closest NPC
+                    parent
+                        .spawn((
+                            Text("closest interact entity: ".to_string()),
+                            TextFont {
+                                font_size: 20.0,
+                                ..default()
+                            },
+                            TextColor(TEXT_COLOR),
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextSpan::default(),
+                                TextFont {
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                                TextColor(TEXT_COLOR),
+                                DebugInfoMarker::ClosestActivateEntity,
+                            ));
+                        });
+                    //TODO Player states HP, MP, etcのデバッグ情報を追加
+                });
+            // Map informations
             parent.spawn((
-                Text("Player".to_string()),
+                Text("Maps".to_string()),
                 TextFont {
                     font_size: 30.0,
                     ..default()
                 },
                 TextColor(TEXT_COLOR),
             ));
-            //TODO [URLのサンプルを参考にデバッグ情報の表示を実装。https://bevy.org/examples/ui-user-interface/text/]
-            //TODO Player name
-            parent.spawn((
-                Text(format!("player name: {}", r_player.name)),
-                TextFont {
-                    font_size: 20.0,
+            parent
+                .spawn(Node {
+                    flex_direction: FlexDirection::Column,
                     ..default()
-                },
-                TextColor(TEXT_COLOR),
-            ));
-            // Player position
-            parent.spawn((
-                Text("player position: ".to_string()),
-                TextFont {
-                    font_size: 20.0,
-                    ..default()
-                },
-                TextColor(TEXT_COLOR),
-            )).with_children(|parent|{
-                parent.spawn((
-                    TextSpan::default(),
-                    TextFont {
-                        font_size: 20.0,
-                        ..default()
-                    },
-                    TextColor(TEXT_COLOR),
-                    DebugInfoMarker::PlayerPosition,
-                ));
-            });
-            // Player direction
-            parent.spawn((
-                Text("player direction: ".to_string()),
-                TextFont {
-                    font_size: 20.0,
-                    ..default()
-                },
-                TextColor(TEXT_COLOR),
-            )).with_children(|parent|{
-                parent.spawn((
-                    TextSpan::default(),
-                    TextFont {
-                        font_size: 20.0,
-                        ..default()
-                    },
-                    TextColor(TEXT_COLOR),
-                    DebugInfoMarker::PlayerDirection,
-                ));
-            });
-            //TODO Player states HP, MP, etc.
+                })
+                .with_children(|parent| {
+                    // Map name
+                    parent
+                        .spawn((
+                            Text("Map: ".to_string()),
+                            TextFont {
+                                font_size: 20.0,
+                                ..default()
+                            },
+                            TextColor(TEXT_COLOR),
+                        ))
+                        .with_children(|parent| {
+                            parent.spawn((
+                                TextSpan::default(),
+                                TextFont {
+                                    font_size: 20.0,
+                                    ..default()
+                                },
+                                TextColor(TEXT_COLOR),
+                                DebugInfoMarker::MapName,
+                            ));
+                        });
+                });
         });
-        // Map informations
-        parent.spawn(Node{
-            flex_direction: FlexDirection::Column,
-            ..default()
-        }).with_children(|parent| {
-            // Map name
-            parent.spawn((
-                Text("Map: ".to_string()),
-                TextFont {
-                    font_size: 20.0,
-                    ..default()
-                },
-                TextColor(TEXT_COLOR),
-            )).with_children(|parent|{
-                parent.spawn((
-                    TextSpan::default(),
-                    TextFont {
-                        font_size: 20.0,
-                        ..default()
-                    },
-                    TextColor(TEXT_COLOR),
-                    DebugInfoMarker::MapName,
-                ));
-            });
-        });
-    });
 }
 
 pub fn update_debug_info(
     active_datas: Res<ActiveDatas>,
     r_player: Res<Player>,
-    mut query: Query<(&mut TextSpan, & DebugInfoMarker)>,
+    mut query: Query<(&mut TextSpan, &DebugInfoMarker)>,
 ) {
     for (mut text_span, debug_info) in query.iter_mut() {
         match *debug_info {
-            DebugInfoMarker::PlayerPosition => **text_span = format!("x: {}, y: {}", r_player.position.x, r_player.position.y),
-            DebugInfoMarker::PlayerDirection => **text_span = format!("direction: {:?}", r_player.direction),
-            DebugInfoMarker::MapName => **text_span = format!("map name: {}", active_datas.active_map_name), // Assuming the map name is stored in Player.name
+            DebugInfoMarker::PlayerPosition => {
+                **text_span = format!("x: {}, y: {}", r_player.position.x, r_player.position.y)
+            }
+            DebugInfoMarker::PlayerDirection => {
+                **text_span = format!("direction: {:?}", r_player.direction)
+            }
+            DebugInfoMarker::MapName => {
+                **text_span = format!("map name: {}", active_datas.active_stage_name)
+            }
+            DebugInfoMarker::ClosestActivateEntity => {
+                **text_span = match &active_datas.closest_interact_entity_type{
+                    InteractEntities::NPC(npc) => format!("NPC : {}", npc.id),
+                    InteractEntities::None => "None".to_string(),
+                }
+            }
             _ => {}
         }
     }

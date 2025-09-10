@@ -21,14 +21,12 @@ pub fn detect_teleport_node_colliding(
         for (teleport_entity, teleport_node) in teleport_node.iter() {
             if colliding_entities.contains(&teleport_entity) {
                 // Update next teleport map and position
-                r_active_datas.teleport_map = teleport_node.target_map;
+                r_active_datas.teleport_stage = teleport_node.target_stage;
                 r_active_datas.teleport_position = teleport_node.teleport_position;
                 // Set the next state to loading to handle the teleport
                 in_game_state.set(InGameState::Loading);
-                println!("Player teleport to: {:?}", teleport_node.target_map);
+                println!("Player teleport to: {:?}", teleport_node.target_stage);
             }
         }
     }
 }
-
-//TODO [テレポートノードに衝突しテレポートした際に、現在のマップ情報を更新する(て情報を保持するresourceを実装する)]

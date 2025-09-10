@@ -1,12 +1,15 @@
-use crate::game::world::map::map_plugin;
-
+use crate::core::resource::ActiveDatas;
+use crate::core::resource::InWorldTime;
 use crate::game::world::player;
+use crate::game::world::stage;
 use crate::{GameState, core::systems::despawn_screen};
 use bevy::prelude::*;
 
 pub fn splash_plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Splash), splash_setup)
-        .add_plugins((map_plugin, player::player_plugin))
+        .insert_resource(InWorldTime::default())
+        .insert_resource(ActiveDatas::default())
+        .add_plugins((stage::stage_plugin, player::player_plugin))
         .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
         .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>);
 }
