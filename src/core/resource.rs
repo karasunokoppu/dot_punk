@@ -34,12 +34,19 @@ impl Default for ActiveDatas {
     }
 }
 
-#[derive(Resource, Default, Clone)]
+#[derive(Resource, Clone)]
 pub struct InWorldTime{
     pub hour: i32,
     pub minute: i32,
 }
 impl InWorldTime {
+    pub fn default() -> Self {
+        InWorldTime {
+            hour: 12,
+            minute: 0,
+        }
+    }
+
     pub fn add_time(self: &Self, hour: i32, minute: i32) -> Self{
         let added_minute = self.minute + minute;
         let add_hour = added_minute / ONE_HOUR_MINUTE;
