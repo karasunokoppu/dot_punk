@@ -36,7 +36,7 @@ pub fn setup_time_view(
             ..default()
         },
         TimeViewMarker,
-        BackgroundColor(Color::BLACK.with_alpha(time_to_sun as f32)),
+        BackgroundColor(Color::BLACK.with_alpha(time_to_sun)),
         GlobalZIndex(30),
     ));
 }
