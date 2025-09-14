@@ -27,6 +27,7 @@ pub fn loading_plugin(app: &mut App) {
         despawn_screen::<OnLoadingScreen>,
     );
 }
+//TODO [New GameでInGameに入ったときにActiveDatasとInWorldTimeを初期化する]
 
 #[derive(Component)]
 pub struct OnLoadingScreen;

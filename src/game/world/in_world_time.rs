@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-use crate::{core::{resource::InWorldTime, setting::game_setting::{ONE_DAY_HOUR, ONE_HOUR_MINUTE, ONE_MINUTE_SECOND}}, GameState};
+use crate::{core::{resource::InWorldTime, setting::game_setting::{ONE_DAY_HOUR, ONE_HOUR_MINUTE, ONE_MINUTE_SECOND}, systems::despawn_screen}, GameState};
 
 pub fn in_world_time_plugin(app: &mut App){
     app
@@ -13,7 +13,11 @@ pub fn in_world_time_plugin(app: &mut App){
     .add_systems(Update, (
         add_time_for_debug,
         spend_time,
-    ).run_if(in_state(GameState::InGame)));
+    ).run_if(in_state(GameState::InGame)))
+    .add_systems(OnExit(GameState::InGame), (
+        despawn_screen::<TimeViewMarker>,
+        despawn_timer,
+    ));
 }
 
 #[derive(Component)]
@@ -69,6 +73,15 @@ pub fn add_timer(
     commands.spawn(TimeSpendTimer{
         timer: Timer::new(Duration::from_secs(ONE_MINUTE_SECOND as u64), TimerMode::Repeating)
     });
+}
+
+pub fn despawn_timer(
+    mut comamnds: Commands,
+    timer: Query<(Entity, &TimeSpendTimer)>,
+){
+    for (entity, _) in timer.iter(){
+        comamnds.entity(entity).despawn();
+    }
 }
 
 pub fn add_time_for_debug(
