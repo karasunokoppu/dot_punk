@@ -1,6 +1,6 @@
-use bevy::{color::palettes::css::{LIGHT_GRAY, WHITE}, prelude::*};
+use bevy::{color::palettes::css::LIGHT_GRAY, prelude::*};
 
-use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkChoiceElement, TalkDialog, TalkElement, TalkElementType, TalkTextElement, Talkers}, TalkTextBoxChoiceIndex, TalkTextBoxState, TalkTextBoxType}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent, stage::component::Stage}}};
+use crate::{core::{resource::{ActiveDatas, Stages}, setting::key_map::KeyMap, ui::style::{TALK_TEXTBOX_NAME_COLOR, TEXT_COLOR}}, game::{ui::talk::{components::{TalkChoiceElement, TalkDialog, TalkElementType, TalkTextElement, Talkers}, TalkTextBoxChoiceIndex, TalkTextBoxState, TalkTextBoxType}, world::{npc::components::NPCType, player::interact_entity::controll::TalkToNPCEvent, stage::component::Stage}}};
 
 #[derive(Component)]
 pub struct TalkTextBoxMarker;
@@ -40,7 +40,7 @@ pub fn create_text_window(
                                 let first_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == 0}).unwrap();
                                 next_talk_textbox_state.set(TalkTextBoxState::Enabled);
                                 //テキストボックス表示
-                                match &first_talk_element.element_type{//TODO [first_talk_element.element_type以外同一]
+                                match &first_talk_element.element_type{//TODO [memo: first_talk_element.element_type以外同一]
                                     TalkElementType::Text(text) => {
                                         spawn_talk_textbox_text_ui(&mut commands, text, stage, &mut r_active_datas, talk_dialog, &mut next_talk_textbox_type, &mut r_talk_textbox_choice_index);
                                     }
@@ -97,10 +97,7 @@ pub fn read_talk_text(
                                         //会話データを持っているNPCのIDを保持
                                         r_active_datas.talking_npc = Some(npc.id);
                                         //最初の会話データを取得
-                                        let next_talk_index = match r_active_datas.talk_index {
-                                            Some(talk_index) => talk_index,
-                                            None => 0
-                                        };
+                                        let next_talk_index = r_active_datas.talk_index.unwrap_or_default();
                                         let next_talk_element = &talk_dialog.dialog.iter().find(|element|{element.local_talk_id == next_talk_index}).unwrap();
                                         match &next_talk_element.element_type{
                                             TalkElementType::Text(text) => {
@@ -122,7 +119,9 @@ pub fn read_talk_text(
                                 }
                             }
                         }
-                        None => {}
+                        None => {
+                            //TODO [エラー処理を実装する]
+                        }
                     }
                 }
             }

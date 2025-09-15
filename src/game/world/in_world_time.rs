@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-use crate::{core::{resource::InWorldTime, setting::game_setting::{ONE_DAY_HOUR, ONE_HOUR_MINUTE, ONE_MINUTE_SECOND}, systems::despawn_screen}, GameState};
+use crate::{core::{resource::InWorldTime, setting::game_setting::ONE_MINUTE_SECOND, systems::despawn_screen}, GameState};
 
 pub fn in_world_time_plugin(app: &mut App){
     app

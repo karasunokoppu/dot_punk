@@ -5,7 +5,7 @@ use crate::{
         resource::{ActiveDatas, Player},
         systems::{despawn_screen, state_change_detect},
         ui::style::TEXT_COLOR,
-    }, game::{ui::{pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk::{TalkTextBoxState, TalkTextBoxType}}, world::player::interact_entity::InteractEntities}, states::{in_game::{player_states::{ActionStates, JumpState, MoveStates}, InGameState, PauseState}, main_menu::setting_ui::MainSettingMenuState}, GameState
+    }, game::{ui::{pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk::{TalkTextBoxState, TalkTextBoxType}}, world::player::interact_entity::InteractEntities}, states::{in_game::{player_states::{ActionStates, MoveStates}, InGameState, PauseState}, main_menu::setting_ui::MainSettingMenuState}, GameState
 };
 
 pub fn debug_plungin(app: &mut App) {
@@ -26,7 +26,6 @@ pub fn debug_plungin(app: &mut App) {
                 state_change_detect::<PauseState>,
                 state_change_detect::<ActionStates>,
                 state_change_detect::<MoveStates>,
-                state_change_detect::<JumpState>,
                 state_change_detect::<MainSettingMenuState>,
                 state_change_detect::<DebugModeState>,
                 state_change_detect::<PauseButtonAction>,
@@ -172,7 +171,7 @@ pub fn spawn_debug_information(mut commands: Commands, r_player: Res<Player>) {
                                 DebugInfoMarker::ClosestActivateEntity,
                             ));
                         });
-                    //TODO Player states HP, MP, etcのデバッグ情報を追加
+                    //TODO [Player states HP, MP, etcのデバッグ情報を追加]
                 });
             // Map informations
             parent.spawn((

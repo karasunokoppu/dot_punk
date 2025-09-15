@@ -53,4 +53,4 @@ fn setup_camera(mut commands: Commands) {
     commands.spawn((Camera2d, MainCamera, Transform::from_xyz(0.0, 0.0, 0.0)));
 }
 
-//TODO: [bevy_light_2dを試す]
+//TODO [bevy_light_2dを試す]

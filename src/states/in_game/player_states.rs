@@ -14,11 +14,3 @@ pub enum MoveStates {
     Wark,
     Run,
 }
-
-#[derive(Clone, Copy, Default, Eq, PartialEq, Debug, Hash, States)]
-pub enum JumpState {
-    #[default]
-    NotJump,
-    FirstJump,
-    SecondJump,
-}

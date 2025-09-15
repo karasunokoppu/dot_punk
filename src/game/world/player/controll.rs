@@ -118,10 +118,8 @@ pub fn update_camera_pos(
     player_pos: Query<&Transform, (With<PlayerMarker>, Without<MainCamera>)>,
     mut camera: Query<&mut Transform, (With<MainCamera>, Without<PlayerMarker>)>,
 ) {
-    if let Ok(player_pos) = player_pos.single() {
-        if let Ok(mut camera_transform) = camera.single_mut() {
-            camera_transform.translation.x = player_pos.translation.x;
-            camera_transform.translation.y = player_pos.translation.y;
-        }
+    if let Ok(player_pos) = player_pos.single() && let Ok(mut camera_transform) = camera.single_mut(){
+        camera_transform.translation.x = player_pos.translation.x;
+        camera_transform.translation.y = player_pos.translation.y;
     }
 }

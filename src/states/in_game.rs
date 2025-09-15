@@ -6,7 +6,7 @@ use bevy::prelude::*;
 use crate::{
     core::systems::despawn_screen, debug::{self, DebugModeState}, game::{
         ui::{self, pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk}, world::in_world_time,
-    }, states::in_game::player_states::{ActionStates, JumpState, MoveStates}, GameState
+    }, states::in_game::player_states::{ActionStates, MoveStates}, GameState
 };
 
 #[derive(Component)]
@@ -41,7 +41,6 @@ pub fn in_game_plugin(app: &mut App) {
         .init_state::<PauseState>()
         .init_state::<ActionStates>()
         .init_state::<MoveStates>()
-        .init_state::<JumpState>()
         .init_state::<DebugModeState>()
         .init_state::<PauseButtonAction>()
         .init_state::<PauseSettingMenuState>()
