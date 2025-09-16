@@ -176,10 +176,12 @@ pub fn main_menu_action(
                 MenuButtonAction::Quit => {
                     app_exit_events.write(AppExit::Success);
                 }
+                //TODO [New GameでInGameに入ったときにActiveDatasとInWorldTimeを更新する]
                 MenuButtonAction::NewPlay => {
                     game_state.set(GameState::InGame);
                     menu_state.set(MenuState::Disabled);
                 }
+                //TODO [Continue PlayでSave Dataを選択肢、ActiveDatasとInWorldTimeを更新する]
                 MenuButtonAction::ContinuePlay => {
                     r_active_datas.active_stage_id = 1;
                     r_active_datas.teleport_stage = 1;

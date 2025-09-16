@@ -6,6 +6,8 @@ edition = "2024"
 [dependencies]
 bevy = "0.16.1"
 avian2d = "0.3"
+serde = "1.0.225"
+ron = "0.11.0"
 
 [profile.dev]
 opt-level = 1

@@ -1,5 +1,7 @@
 use crate::core::resource::ActiveDatas;
 use crate::core::resource::InWorldTime;
+use crate::core::save_system::load_screen::load_save_files;
+use crate::core::save_system::load_screen::SaveFileDatas;
 use crate::game::world::player;
 use crate::game::world::stage;
 use crate::{GameState, core::systems::despawn_screen};
@@ -9,6 +11,7 @@ pub fn splash_plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Splash), splash_setup)
         .insert_resource(InWorldTime::default())
         .insert_resource(ActiveDatas::default())
+        .insert_resource(SaveFileDatas::default())
         .add_plugins((stage::stage_plugin, player::player_plugin))
         .add_systems(Update, countdown.run_if(in_state(GameState::Splash)))
         .add_systems(OnExit(GameState::Splash), despawn_screen::<OnSplashScreen>);

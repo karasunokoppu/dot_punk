@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{core::resource::ActiveDatas, game::world::{map::components::PlayerMarker, player::interact_entity::{InteractEntities, NPCMarker}}};
+use crate::{core::{resource::ActiveDatas, setting::game_setting::PLAYER_TALKABLE_LENGTH}, game::world::{map::components::PlayerMarker, player::interact_entity::{InteractEntities, NPCMarker}}};
 
 pub fn detect_nearby_activate_entity(
     player_query: Query<(&Transform, &PlayerMarker)>,
@@ -21,7 +21,7 @@ pub fn detect_nearby_activate_entity(
                 InteractEntities::NPC(npc) => {
 
                     // 100.0の距離以内にいるNPCを検出する
-                    if distance <= 100.0 {
+                    if distance <= PLAYER_TALKABLE_LENGTH {
                         activate_entity_distances.push((InteractEntities::NPC(NPCMarker{id: npc.id}), distance));
                     }
                 }

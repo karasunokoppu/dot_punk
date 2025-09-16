@@ -6,8 +6,9 @@ use crate::{
     },
 };
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Resource)]
+#[derive(Resource, Serialize, Deserialize)]
 pub struct ActiveDatas {
     pub active_stage_id: u32,
     pub active_stage_name: String,

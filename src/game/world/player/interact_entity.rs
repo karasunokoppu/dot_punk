@@ -2,6 +2,7 @@ pub mod controll;
 pub mod senser;
 
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 use crate::{game::world::player::interact_entity::{controll::send_interact_event, senser::detect_nearby_activate_entity}, states::in_game::InGameState};
 
@@ -14,13 +15,13 @@ pub fn activate_entity_plugin(app: &mut App) {
     ).run_if(in_state(InGameState::Playing)));
 }
 
-#[derive(Component, PartialEq, Eq, Clone)]
+#[derive(Component, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum InteractEntities{
     NPC(NPCMarker),
     None,
 }
 
-#[derive(Component, PartialEq, Eq, Clone)]
+#[derive(Component, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub struct NPCMarker{
     pub id: u32,//NPCのID
 }

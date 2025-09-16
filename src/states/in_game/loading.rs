@@ -3,9 +3,7 @@ use bevy::prelude::*;
 
 use crate::{
     core::{
-        resource::{ActiveDatas, Stages},
-        systems::despawn_screen,
-        ui::style::TEXT_COLOR,
+        resource::{ActiveDatas, Stages}, setting::game_setting::PLAYER_TALKABLE_LENGTH, systems::despawn_screen, ui::style::TEXT_COLOR
     },
     game::world::{
         map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, player::interact_entity::{InteractEntities, NPCMarker}    },
@@ -27,7 +25,6 @@ pub fn loading_plugin(app: &mut App) {
         despawn_screen::<OnLoadingScreen>,
     );
 }
-//TODO [New GameでInGameに入ったときにActiveDatasとInWorldTimeを初期化する]
 
 #[derive(Component)]
 pub struct OnLoadingScreen;
@@ -140,7 +137,7 @@ fn set_game_stage(
                 ),
                 GlobalZIndex(10),
                 //for debugging
-                Mesh2d(meshes.add(Circle::new(20.0))),
+                Mesh2d(meshes.add(Annulus::new(PLAYER_TALKABLE_LENGTH - 2.0, PLAYER_TALKABLE_LENGTH))),
                 MeshMaterial2d(materials.add(Color::srgb(0.0, 0.5, 1.0))),
             ));
 
