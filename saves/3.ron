@@ -1,0 +1,9 @@
+(
+    active_stage_id:0,
+    active_stage_name:"Default Stage",
+    teleport_stage:0,
+    teleport_position:(x:-50.0,y:-100.0),
+    closest_interact_entity_type:NPC((id:2)),
+    talking_npc:None,
+    talk_index:None
+)

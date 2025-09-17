@@ -181,11 +181,8 @@ pub fn main_menu_action(
                     game_state.set(GameState::InGame);
                     menu_state.set(MenuState::Disabled);
                 }
-                //TODO [Continue PlayでSave Dataを選択肢、ActiveDatasとInWorldTimeを更新する]
+                //TODO [Continue Playでセーブデータを選択し、ActiveDatasとInWorldTimeを更新する]
                 MenuButtonAction::ContinuePlay => {
-                    r_active_datas.active_stage_id = 1;
-                    r_active_datas.teleport_stage = 1;
-                    r_active_datas.teleport_position = Position::default();
                     println!("Push ContinuePlay");
                     game_state.set(GameState::InGame);
                     menu_state.set(MenuState::Disabled);

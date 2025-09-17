@@ -8,7 +8,7 @@ use crate::{
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Resource, Serialize, Deserialize)]
+#[derive(Resource, Clone, Serialize, Deserialize)]
 pub struct ActiveDatas {
     pub active_stage_id: u32,
     pub active_stage_name: String,
@@ -35,7 +35,7 @@ impl Default for ActiveDatas {
     }
 }
 
-#[derive(Resource, Clone)]
+#[derive(Resource, Clone, Serialize, Deserialize)]
 pub struct InWorldTime{
     pub hour: i32,
     pub minute: i32,
