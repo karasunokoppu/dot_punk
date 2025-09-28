@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::{ActiveDatas, InWorldTime}, save_system::save_load::{save_data, LoadDataEvent}, setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, game::ui::talk::TalkTextBoxState, states::in_game::{InGameState, PauseState}, GameState
+    core::{resource::{ActiveDatas, InWorldTime}, save_system::save_load::LoadDataEvent, setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, game::ui::talk::TalkTextBoxState, states::in_game::{InGameState, PauseState}, GameState
 };
 
 #[derive(Component)]
@@ -202,7 +202,7 @@ pub fn pause_menu_action(
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 PauseButtonAction::Save => {
-                    save_data(&active_datas, &in_world_time);//TODO [セーブ方法、要変更]
+                    //TODO [セーブ方法、要変更]
                     next_in_game_state.set(InGameState::Playing);//(仮)
                     next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);
@@ -212,7 +212,7 @@ pub fn pause_menu_action(
                     println!(">! Save action triggered");
                 }
                 PauseButtonAction::Load => {
-                    load_event.write(LoadDataEvent{save_name: "4".to_string()});//TODO [セーブデータを選択し、ActiveDatasとInWorldTimeを更新するように変更]
+                    //TODO [セーブデータを選択し、ActiveDatasとInWorldTimeを更新するように変更]
                     next_in_game_state.set(InGameState::Playing);//(仮)
                     next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);

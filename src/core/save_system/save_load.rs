@@ -14,6 +14,9 @@ pub struct LoadDataEvent {
     pub save_name: String,
 }
 
+#[derive(Event)]
+pub struct SaveDataEvent;
+
 #[derive(Serialize, Deserialize)]
 pub struct SavedDatas{
     active_datas: ActiveDatas,
@@ -21,29 +24,40 @@ pub struct SavedDatas{
 }
 
 //TODO [InWorldTimeも保存するようにする]
-pub fn save_data(active_datas: &ActiveDatas, in_world_time: &InWorldTime) {
-    let file_path = format!("{}/{}.ron", SAVE_DIR, save_data_naming_convention());
+//TODO [SaveSystemPluginを作成し実装する]
+pub fn save_data(
+    active_datas: &ActiveDatas,
+    in_world_time: &InWorldTime,
+    mut save_data_event: EventReader<SaveDataEvent>,
+) {
+    for _ in save_data_event.read(){
+        let file_path = format!("{}/{}.ron", SAVE_DIR, save_data_naming_convention());
 
-    let data = SavedDatas{
-        active_datas: active_datas.clone(),
-        in_world_time: in_world_time.clone()
-    };
+        let data = SavedDatas{
+            active_datas: active_datas.clone(),
+            in_world_time: in_world_time.clone()
+        };
 
-    let save_strings = ron::to_string(&data).expect("Failed to serialize data");
-    let mut file = File::create(file_path).unwrap();
+        let save_strings = ron::to_string(&data).expect("Failed to serialize data");
+        // Create the save directory if it doesn't exist
+        fs::create_dir_all(SAVE_DIR).unwrap();
+        // Write the serialized data to a file
+        let mut file = File::create(file_path).unwrap();
 
-    file.write_all(save_strings.as_bytes()).unwrap();
+        file.write_all(save_strings.as_bytes()).unwrap();
+    }
 }
 
 //TODO [InWorldTimeも読み込むようにする]
+//TODO [SaveSystemPluginを作成し実装する]
 pub fn load_data(
     mut active_datas: ResMut<ActiveDatas>,
     mut in_world_time: ResMut<InWorldTime>,
-    mut save_data_iter: EventReader<LoadDataEvent>,
+    mut load_data_event: EventReader<LoadDataEvent>,
 ) {
-    for load_data_index in save_data_iter.read() {
+    for load_data_index in load_data_event.read() {
         let file_path = format!("saves/{}.ron", load_data_index.save_name);
-        let mut file = File::open(file_path).unwrap();
+        let mut file = File::open(file_path).expect("Failed to open save file");
         let mut buffer = String::new();
 
         file.read_to_string(&mut buffer).unwrap();

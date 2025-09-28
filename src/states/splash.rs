@@ -3,6 +3,7 @@ use crate::core::resource::InWorldTime;
 use crate::core::save_system::load_screen::load_save_files;
 use crate::core::save_system::load_screen::SaveFileDatas;
 use crate::core::save_system::save_load::LoadDataEvent;
+use crate::core::save_system::save_load::SaveDataEvent;
 use crate::game::world::player;
 use crate::game::world::stage;
 use crate::{GameState, core::systems::despawn_screen};
@@ -10,6 +11,7 @@ use bevy::prelude::*;
 
 pub fn splash_plugin(app: &mut App) {
     app.add_systems(OnEnter(GameState::Splash), splash_setup)
+        .add_event::<SaveDataEvent>()
         .add_event::<LoadDataEvent>()
         .insert_resource(InWorldTime::default())
         .insert_resource(ActiveDatas::default())
