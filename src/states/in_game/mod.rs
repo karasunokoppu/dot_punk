@@ -4,9 +4,14 @@ pub mod player_states;
 use bevy::prelude::*;
 
 use crate::{
-    core::systems::despawn_screen, debug::{self, DebugModeState}, game::{
-        ui::{self, pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk}, world::in_world_time,
-    }, states::in_game::player_states::{ActionStates, MoveStates}, GameState
+    GameState,
+    core::systems::despawn_screen,
+    debug::{self, DebugModeState},
+    game::{
+        ui::{self, pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk},
+        world::in_world_time,
+    },
+    states::in_game::player_states::{ActionStates, MoveStates},
 };
 
 #[derive(Component)]

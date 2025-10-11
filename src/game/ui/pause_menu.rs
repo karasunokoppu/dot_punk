@@ -1,7 +1,14 @@
 use bevy::prelude::*;
 
 use crate::{
-    core::{resource::{ActiveDatas, InWorldTime}, save_system::save_load::LoadDataEvent, setting::key_map, ui::style::{NORMAL_BUTTON, TEXT_COLOR}}, debug::DebugModeState, game::ui::talk::TalkTextBoxState, states::in_game::{InGameState, PauseState}, GameState
+    GameState,
+    core::{
+        setting::key_map,
+        ui::style::{NORMAL_BUTTON, TEXT_COLOR},
+    },
+    debug::DebugModeState,
+    game::ui::talk::TalkTextBoxState,
+    states::in_game::{InGameState, PauseState},
 };
 
 #[derive(Component)]
@@ -194,16 +201,13 @@ pub fn pause_menu_action(
     mut next_game_state: ResMut<NextState<GameState>>,
     mut next_debug_modestate: ResMut<NextState<DebugModeState>>,
     mut next_in_pause_state: ResMut<NextState<PauseButtonAction>>, //Main Menu
-    active_datas: Res<ActiveDatas>,
-    in_world_time: Res<InWorldTime>,
-    mut load_event: EventWriter<LoadDataEvent>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {
             match menu_button_action {
                 PauseButtonAction::Save => {
                     //TODO [セーブ方法、要変更]
-                    next_in_game_state.set(InGameState::Playing);//(仮)
+                    next_in_game_state.set(InGameState::Playing); //(仮)
                     next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);
                     next_in_pause_state.set(PauseButtonAction::Save);
@@ -213,7 +217,7 @@ pub fn pause_menu_action(
                 }
                 PauseButtonAction::Load => {
                     //TODO [セーブデータを選択し、ActiveDatasとInWorldTimeを更新するように変更]
-                    next_in_game_state.set(InGameState::Playing);//(仮)
+                    next_in_game_state.set(InGameState::Playing); //(仮)
                     next_debug_modestate.set(DebugModeState::Off);
                     next_pause_menu_state.set(PauseState::Disabled);
                     next_in_pause_state.set(PauseButtonAction::Load);

@@ -2,7 +2,8 @@ use bevy::prelude::*;
 
 use crate::{
     core::ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
-    game::ui::pause_menu::PauseButtonAction, states::in_game::InGameState,
+    game::ui::pause_menu::PauseButtonAction,
+    states::in_game::InGameState,
 };
 
 // Tag component used to tag entities added on the settings menu screen

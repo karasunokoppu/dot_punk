@@ -1,11 +1,27 @@
 use bevy::prelude::*;
 
 use crate::{
+    GameState,
     core::{
         resource::{ActiveDatas, Player},
         systems::{despawn_screen, state_change_detect},
         ui::style::TEXT_COLOR,
-    }, game::{ui::{pause_menu::PauseButtonAction, setting_ui::PauseSettingMenuState, talk::{TalkTextBoxState, TalkTextBoxType}}, world::player::interact_entity::InteractEntities}, states::{in_game::{player_states::{ActionStates, MoveStates}, InGameState, PauseState}, main_menu::setting_ui::MainSettingMenuState}, GameState
+    },
+    game::{
+        ui::{
+            pause_menu::PauseButtonAction,
+            setting_ui::PauseSettingMenuState,
+            talk::{TalkTextBoxState, TalkTextBoxType},
+        },
+        world::player::interact_entity::InteractEntities,
+    },
+    states::{
+        in_game::{
+            InGameState, PauseState,
+            player_states::{ActionStates, MoveStates},
+        },
+        main_menu::setting_ui::MainSettingMenuState,
+    },
 };
 
 pub fn debug_plungin(app: &mut App) {
@@ -32,7 +48,8 @@ pub fn debug_plungin(app: &mut App) {
                 state_change_detect::<PauseSettingMenuState>,
                 state_change_detect::<TalkTextBoxState>,
                 state_change_detect::<TalkTextBoxType>,
-            ).run_if(in_state(DebugModeState::On)),
+            )
+                .run_if(in_state(DebugModeState::On)),
         );
 }
 
@@ -230,8 +247,8 @@ pub fn update_debug_info(
                 **text_span = format!("map name: {}", active_datas.active_stage_name)
             }
             DebugInfoMarker::ClosestActivateEntity => {
-                **text_span = match &active_datas.closest_interact_entity_type{
-                    InteractEntities::NPC(npc) => format!("NPC : {}", npc.id),
+                **text_span = match &active_datas.closest_interact_entity_type {
+                    InteractEntities::Npc(npc) => format!("NPC : {}", npc.id),
                     InteractEntities::None => "None".to_string(),
                 }
             }

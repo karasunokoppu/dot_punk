@@ -3,10 +3,15 @@ use bevy::prelude::*;
 
 use crate::{
     core::{
-        resource::{ActiveDatas, Stages}, setting::game_setting::PLAYER_TALKABLE_LENGTH, systems::despawn_screen, ui::style::TEXT_COLOR
+        resource::{ActiveDatas, Stages},
+        setting::game_setting::PLAYER_TALKABLE_LENGTH,
+        systems::despawn_screen,
+        ui::style::TEXT_COLOR,
     },
     game::world::{
-        map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker}, player::interact_entity::{InteractEntities, NPCMarker}    },
+        map::components::{PlayerMarker, TeleportNode, TeleportNodeMarker},
+        player::interact_entity::{InteractEntities, NPCMarker},
+    },
     states::in_game::{InGameEntityMarker, InGameState},
 };
 
@@ -137,7 +142,10 @@ fn set_game_stage(
                 ),
                 GlobalZIndex(10),
                 //for debugging
-                Mesh2d(meshes.add(Annulus::new(PLAYER_TALKABLE_LENGTH - 2.0, PLAYER_TALKABLE_LENGTH))),
+                Mesh2d(meshes.add(Annulus::new(
+                    PLAYER_TALKABLE_LENGTH - 2.0,
+                    PLAYER_TALKABLE_LENGTH,
+                ))),
                 MeshMaterial2d(materials.add(Color::srgb(0.0, 0.5, 1.0))),
             ));
 
@@ -145,7 +153,7 @@ fn set_game_stage(
             for npc in &stage.npcs {
                 commands.spawn((
                     InGameEntityMarker,
-                    InteractEntities::NPC(NPCMarker{id: npc.id}),
+                    InteractEntities::Npc(NPCMarker { id: npc.id }),
                     RigidBody::Static,
                     Collider::circle(20.0),
                     LockedAxes::ROTATION_LOCKED,

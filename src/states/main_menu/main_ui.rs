@@ -1,10 +1,6 @@
 use crate::{
     GameState,
-    core::{
-        components::Position,
-        resource::ActiveDatas,
-        ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
-    },
+    core::ui::style::{BACK_GROUND_COLOR, NORMAL_BUTTON, TEXT_COLOR},
     states::main_menu::MenuState,
 };
 use bevy::prelude::*;
@@ -168,7 +164,6 @@ pub fn main_menu_action(
     mut app_exit_events: EventWriter<AppExit>,
     mut menu_state: ResMut<NextState<MenuState>>,
     mut game_state: ResMut<NextState<GameState>>,
-    mut r_active_datas: ResMut<ActiveDatas>,
 ) {
     for (interaction, menu_button_action) in &interaction_query {
         if *interaction == Interaction::Pressed {

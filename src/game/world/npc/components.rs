@@ -2,9 +2,10 @@ use bevy::prelude::*;
 
 use crate::{
     core::components::{Position, SpriteData},
-    game::{ui::talk::components::TalkDialog, world::{
-        player::{components::Direction, states_components::EntityStates},
-    }},
+    game::{
+        ui::talk::components::TalkDialog,
+        world::player::{components::Direction, states_components::EntityStates},
+    },
 };
 
 #[derive(Component, PartialEq, Eq)]
@@ -56,7 +57,7 @@ impl NPC {
             states: EntityStates::default(),
         }
     }
-    pub fn with_position(self: Self, position: Position) -> Self {
+    pub fn with_position(self, position: Position) -> Self {
         NPC {
             id: self.id,
             name: self.name,

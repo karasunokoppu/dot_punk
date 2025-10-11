@@ -1,8 +1,8 @@
 pub mod animation;
 pub mod components;
 pub mod controll;
-pub mod states_components;
 pub mod interact_entity;
+pub mod states_components;
 
 use bevy::prelude::*;
 

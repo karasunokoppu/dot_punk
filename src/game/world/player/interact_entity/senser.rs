@@ -1,6 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{core::{resource::ActiveDatas, setting::game_setting::PLAYER_TALKABLE_LENGTH}, game::world::{map::components::PlayerMarker, player::interact_entity::{InteractEntities, NPCMarker}}};
+use crate::{
+    core::{resource::ActiveDatas, setting::game_setting::PLAYER_TALKABLE_LENGTH},
+    game::world::{
+        map::components::PlayerMarker,
+        player::interact_entity::{InteractEntities, NPCMarker},
+    },
+};
 
 pub fn detect_nearby_activate_entity(
     player_query: Query<(&Transform, &PlayerMarker)>,
@@ -17,32 +23,34 @@ pub fn detect_nearby_activate_entity(
             let distance = player_position.distance(activate_entity_position);
 
             //1-1.各Activate Entityのタイプごとに適切な距離をチェックする
-            match activate_entity{
-                InteractEntities::NPC(npc) => {
-
+            match activate_entity {
+                InteractEntities::Npc(npc) => {
                     // 100.0の距離以内にいるNPCを検出する
                     if distance <= PLAYER_TALKABLE_LENGTH {
-                        activate_entity_distances.push((InteractEntities::NPC(NPCMarker{id: npc.id}), distance));
+                        activate_entity_distances
+                            .push((InteractEntities::Npc(NPCMarker { id: npc.id }), distance));
                     }
                 }
                 InteractEntities::None => {}
             }
         }
         // 2.最も近いActivate Entityを見つける
-        match closest_activate_entity(activate_entity_distances){
+        match closest_activate_entity(activate_entity_distances) {
             Some(active_entity) => {
                 if active_datas.closest_interact_entity_type != active_entity {
                     active_datas.closest_interact_entity_type = active_entity;
                 }
-            },
+            }
             None => {
                 active_datas.closest_interact_entity_type = InteractEntities::None;
-            },
+            }
         }
     }
 }
 
-fn closest_activate_entity(npc_distances: Vec<(InteractEntities, f32)>) -> Option<InteractEntities> {
+fn closest_activate_entity(
+    npc_distances: Vec<(InteractEntities, f32)>,
+) -> Option<InteractEntities> {
     if npc_distances.is_empty() {
         return None;
     }

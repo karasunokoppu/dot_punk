@@ -1,4 +1,3 @@
-
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -7,7 +6,10 @@ use std::{
     path::Path,
 };
 
-use crate::core::{resource::{ActiveDatas, InWorldTime}, setting::game_setting::SAVE_DIR};
+use crate::core::{
+    resource::{ActiveDatas, InWorldTime},
+    setting::game_setting::SAVE_DIR,
+};
 
 #[derive(Event)]
 pub struct LoadDataEvent {
@@ -18,7 +20,7 @@ pub struct LoadDataEvent {
 pub struct SaveDataEvent;
 
 #[derive(Serialize, Deserialize)]
-pub struct SavedDatas{
+pub struct SavedDatas {
     active_datas: ActiveDatas,
     in_world_time: InWorldTime,
 }
@@ -30,12 +32,12 @@ pub fn save_data(
     in_world_time: &InWorldTime,
     mut save_data_event: EventReader<SaveDataEvent>,
 ) {
-    for _ in save_data_event.read(){
+    for _ in save_data_event.read() {
         let file_path = format!("{}/{}.ron", SAVE_DIR, save_data_naming_convention());
 
-        let data = SavedDatas{
+        let data = SavedDatas {
             active_datas: active_datas.clone(),
-            in_world_time: in_world_time.clone()
+            in_world_time: in_world_time.clone(),
         };
 
         let save_strings = ron::to_string(&data).expect("Failed to serialize data");
@@ -61,13 +63,13 @@ pub fn load_data(
         let mut buffer = String::new();
 
         file.read_to_string(&mut buffer).unwrap();
-        let load_data:SavedDatas =
-            ron::from_str(&buffer).expect("Failed to deserialize data");
+        let load_data: SavedDatas = ron::from_str(&buffer).expect("Failed to deserialize data");
         active_datas.active_stage_id = load_data.active_datas.active_stage_id;
         active_datas.active_stage_name = load_data.active_datas.active_stage_name;
         active_datas.teleport_stage = load_data.active_datas.teleport_stage;
         active_datas.teleport_position = load_data.active_datas.teleport_position;
-        active_datas.closest_interact_entity_type = load_data.active_datas.closest_interact_entity_type;
+        active_datas.closest_interact_entity_type =
+            load_data.active_datas.closest_interact_entity_type;
         active_datas.talking_npc = load_data.active_datas.talking_npc;
         active_datas.talk_index = load_data.active_datas.talk_index;
 
@@ -86,14 +88,14 @@ pub fn count_ron_files_in_save_dir() -> std::io::Result<usize> {
     let count = fs::read_dir(save_dir)?
         .filter_map(Result::ok) // 読み込みに失敗したファイルをスキップ
         .filter(|entry| {
-            entry.path().extension().map_or(false, |ext| ext == "ron") // .ron拡張子を持つか確認
+            entry.path().extension().is_some_and(|ext| ext == "ron") // .ron拡張子を持つか確認
         })
         .count();
 
     Ok(count)
 }
 
-pub fn save_data_naming_convention() -> String{
+pub fn save_data_naming_convention() -> String {
     let file_count: u32 = match count_ron_files_in_save_dir() {
         Ok(count) => count as u32,
         Err(e) => panic!("{e}"),
